@@ -6,6 +6,7 @@ StarMate 后端完整接口测试（不依赖 pytest，直接运行：
 
 测试在独立的临时数据目录中进行，不会污染 data/ 下的真实数据。
 """
+import json
 import os
 import sys
 import tempfile
@@ -22,6 +23,23 @@ TEMP_DATA_DIR = tempfile.mkdtemp(prefix="starmate_test_")
 storage.DATA_DIR = TEMP_DATA_DIR
 
 from app import app  # noqa: E402
+
+# 测试不调用真实大模型：用固定人设替掉 companion_service 里的 LLM 调用。
+# 否则没配 DEEPSEEK_API_KEY 的机器（以及 CI）连测试都跑不起来。
+import services.companion_service as companion_service  # noqa: E402
+
+
+def _fake_chat_completion(messages, **kwargs):
+    return json.dumps({
+        "name": "小星",
+        "appearance": "银色长发，蓝色眼睛，穿白色卫衣",
+        "personality": ["温柔", "耐心", "会鼓励人"],
+        "speaking_style": "温柔、简短，偶尔用颜文字",
+        "companion_style": "学习搭子",
+    }, ensure_ascii=False)
+
+
+companion_service.chat_completion = _fake_chat_completion
 
 client = app.test_client()
 
@@ -219,14 +237,33 @@ check("GET /api/reward 结构完整",
 
 resp = post_json("/api/reward/claim", {"session_id": session_id})
 body = resp.get_json()
-check("POST /api/reward/claim 领取成功",
-      resp.status_code == 200 and body["data"]["earned_exp"] == 10, str(body))
+check("POST /api/reward/claim 领取成功（完成 10 + 每日目标 10）",
+      resp.status_code == 200 and body["data"]["earned_exp"] == 20, str(body))
 
 resp = post_json("/api/reward/claim", {"session_id": session_id})
 check("重复领取奖励 -> 400", resp.status_code == 400)
 
 resp = post_json("/api/reward/claim", {"session_id": "session_notexist"})
 check("claim 不存在的 session -> 404", resp.status_code == 404)
+
+# 规则 2：连续完成两次专注 +5（当天每日目标已经领过，所以是 10 + 5）
+streak_payload = valid_session_payload()
+streak_payload["task"] = "连续第二次专注"
+resp = post_json("/api/focus/session", streak_payload)
+streak_id = resp.get_json()["data"]["session_id"]
+body = post_json("/api/reward/claim", {"session_id": streak_id}).get_json()
+check("连续第二次专注 -> earned_exp=15",
+      body["success"] and body["data"]["earned_exp"] == 15, str(body))
+
+# 规则 3：换一天的第一条专注拿回每日目标 +10（10 + 5 连续 + 10 每日）
+next_day = valid_session_payload()
+next_day["task"] = "第二天第一次专注"
+next_day["started_at"] = "2026-11-03T09:00:00+09:00"
+resp = post_json("/api/focus/session", next_day)
+next_day_id = resp.get_json()["data"]["session_id"]
+body = post_json("/api/reward/claim", {"session_id": next_day_id}).get_json()
+check("第二天第一次专注 -> earned_exp=25",
+      body["success"] and body["data"]["earned_exp"] == 25, str(body))
 
 # 未完成的短专注不应获得奖励
 short = valid_session_payload()
