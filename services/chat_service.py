@@ -14,7 +14,7 @@ import json
 import re
 
 from services.llm_service import LLMServiceError, chat_completion
-from services.memory_service import (
+from services.memory_service_ai import (
     build_memory_block,
     clean_memory_update,
     sanitize_memory,

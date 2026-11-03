@@ -25,6 +25,7 @@ from app import app  # noqa: E402
 import json  # noqa: E402
 import services.companion_service as companion_service  # noqa: E402
 import services.chat_service as chat_service  # noqa: E402
+import services.diary_service as diary_service  # noqa: E402
 
 
 def _fake_companion(messages, **kwargs):
@@ -36,7 +37,14 @@ def _fake_companion(messages, **kwargs):
 
 
 companion_service.chat_completion = _fake_companion
-chat_service.chat_completion = lambda messages, **kwargs: "测试回复：我陪着你，慢慢来。"
+chat_service.chat_completion = lambda messages, **kwargs: json.dumps(
+    {"reply": "测试回复：我陪着你，慢慢来。", "memory_update": None},
+    ensure_ascii=False,
+)
+diary_service.chat_completion = lambda messages, **kwargs: (
+    "今天完成了一次专注学习，整体状态不错，遇到难点时没有放弃，"
+    "而是慢慢拆解、逐个解决，最后顺利完成了计划，值得肯定。"
+)
 
 client = app.test_client()
 steps = []
