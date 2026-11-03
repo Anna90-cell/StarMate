@@ -1,0 +1,225 @@
+
+/* 页面主体 */
+
+.companion-main {
+    flex: 1;
+    min-height: 100vh;
+    padding: 40px;
+    position: relative;
+    width: 100%;
+
+    /* 首页默认背景 */
+    background: linear-gradient(
+        135deg,
+        #c9c3e5,
+        #ead9e9,
+        #b9c9df
+    );
+}
+
+
+/* 页面标题 */
+
+.page-header {
+    margin-bottom: 30px;
+}
+
+.page-header h1 {
+    font-size: 30px;
+    color: #51485f;
+    margin-bottom: 8px;
+}
+
+.page-header p {
+    color: #756b83;
+}
+
+
+/* 伙伴房间 */
+
+.companion-room {
+    width: 100%;
+    min-height: 650px;
+    padding: 30px;
+
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: 28px;
+
+    box-shadow: 0 10px 35px rgba(80, 65, 100, 0.12);
+    position: relative;
+}
+
+
+/* 房间标题 */
+
+.room-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #665875;
+}
+
+.room-title span {
+    font-size: 24px;
+}
+
+.room-title h2 {
+    font-size: 21px;
+}
+
+
+/* 人物展示区域 */
+
+.companion-display {
+    min-height: 520px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+
+/* 人物形象 */
+
+.companion-character {
+    width: 180px;
+    height: 260px;
+    position: relative;
+    margin-top: 20px;
+}
+
+.companion-head {
+    width: 110px;
+    height: 125px;
+
+    background: #f4d8cf;
+    border-radius: 48% 48% 45% 45%;
+
+    position: absolute;
+    top: 15px;
+    left: 35px;
+    z-index: 2;
+}
+
+.companion-hair {
+    width: 125px;
+    height: 85px;
+
+    background: #756482;
+    border-radius: 55% 55% 20% 20%;
+
+    position: absolute;
+    top: 5px;
+    left: 27px;
+    z-index: 3;
+}
+
+.companion-body {
+    width: 155px;
+    height: 125px;
+
+    background: #c7b2d8;
+    border-radius: 55px 55px 15px 15px;
+
+    position: absolute;
+    top: 135px;
+    left: 12px;
+}
+
+
+/* 伙伴名称 */
+
+.companion-info {
+    text-align: center;
+    margin-top: 25px;
+    color: #594e68;
+}
+
+.companion-info h2 {
+    font-size: 25px;
+    margin-bottom: 8px;
+}
+
+.companion-info p {
+    color: #82758d;
+}
+
+
+/* 未创建状态 */
+
+.empty-state {
+    min-height: 520px;
+
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+    color: #756b83;
+}
+
+.empty-icon {
+    font-size: 60px;
+    margin-bottom: 15px;
+}
+
+.empty-state h2 {
+    margin-bottom: 12px;
+}
+
+.empty-state p {
+    margin-bottom: 25px;
+}
+
+
+/* 创建按钮 */
+
+.create-link {
+    display: inline-block;
+    padding: 12px 28px;
+
+    color: white;
+    text-decoration: none;
+
+    background: #9885b5;
+    border-radius: 25px;
+
+    transition: 0.2s;
+}
+
+.create-link:hover {
+    background: #806b9e;
+}
+
+/* 伙伴房间下方的操作按钮 */
+.companion-actions {
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    margin: 30px auto;
+}
+
+/* 单个按钮 */
+.action-btn {
+    display: inline-block;
+    padding: 14px 30px;
+    border-radius: 30px;
+    background: rgba(255, 255, 255, 0.8);
+    color: #756482;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+/* 鼠标悬停效果 */
+.action-btn:hover {
+    background: #756482;
+    color: white;
+    transform: translateY(-3px);
+}

@@ -1,0 +1,137 @@
+<!--
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的伙伴 - StarMate</title>
+
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/room.css">
+</head>
+
+<body>
+
+    <header>
+        <h1>我的伙伴</h1>
+        <p>欢迎回到你们的小天地</p>
+    </header>
+
+    <main>
+
+        <section>
+            <h2>伙伴信息</h2>
+            <div id="petInfo">
+                <p>伙伴名称：暂未创建</p>
+                <p>伙伴等级：Lv.1</p>
+                <p>伙伴经验：0</p>
+            </div>
+        </section>
+
+        <section>
+            <h2>伙伴房间</h2>
+            <div id="room">
+                <p>这里将展示你的伙伴和房间背景</p>
+            </div>
+        </section>
+
+        <section>
+            <h2>成长记录</h2>
+            <div id="growthInfo">
+                <p>这里将展示伙伴的成长情况</p>
+            </div>
+        </section>
+
+        <nav>
+            <a href="focus.html">进入专注空间</a>
+            <a href="entertainment.html">进入娱乐空间</a>
+            <a href="index.html">返回首页</a>
+        </nav>
+
+    </main>
+
+</body>
+</html>
+-->
+
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StarMate - 我的伙伴</title>
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/companion.css">
+</head>
+
+<body>
+
+<div class="app-container">
+
+    <!-- 右侧主体区域 -->
+    <main class="companion-main">
+
+        <!-- 页面标题 -->
+        <header class="page-header">
+            <h1>我的伙伴</h1>
+            <p>每一次相遇，都值得被珍藏。</p>
+        </header>
+
+
+        <!-- 伙伴房间 -->
+        <section class="companion-room">
+
+            <div class="room-title">
+                <span>♡</span>
+                <h2>伙伴房间</h2>
+            </div>
+
+            <!-- 有伙伴时显示 -->
+            <div class="companion-display" id="companion-display">
+
+                <div class="companion-character">
+
+                    <div class="companion-head"></div>
+                    <div class="companion-hair"></div>
+                    <div class="companion-body"></div>
+
+                </div>
+
+                <div class="companion-info">
+                    <h2 id="companion-name">我的伙伴</h2>
+                    <p>很高兴与你相遇！</p>
+                </div>
+
+            </div>
+
+            <!-- 没有伙伴时显示 -->
+            <div class="empty-state" id="empty-state">
+                <div class="empty-icon">♡</div>
+                <h2>暂未创建伙伴</h2>
+                <p>创建一位属于你的伙伴，开启新的故事吧。</p>
+
+                <a href="create.html" class="create-link">
+                    创建伙伴
+                </a>
+            </div>
+
+        </section>
+
+        <div class="companion-actions">
+            <a href="focus.html" class="action-btn">进入专注空间</a>
+
+            <a href="entertainment.html" class="action-btn">进入娱乐空间</a>
+
+            <a href="index.html" class="action-btn">返回首页</a>
+        </div>
+
+    </main>
+
+</div>
+
+<script src="js/companion.js"></script>
+
+</body>
+</html>
