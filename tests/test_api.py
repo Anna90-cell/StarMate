@@ -42,7 +42,18 @@ companion_service.chat_completion = _fake_chat_completion
 # 聊天路径走 chat_service -> llm_service，测试不调用真实大模型，固定返回模拟回复
 import services.chat_service as chat_service  # noqa: E402
 
-chat_service.chat_completion = lambda messages, **kwargs: "测试回复：我陪着你，慢慢来。"
+chat_service.chat_completion = lambda messages, **kwargs: json.dumps(
+    {"reply": "测试回复：我陪着你，慢慢来。", "memory_update": None},
+    ensure_ascii=False,
+)
+
+# 日记路径走 diary_service -> llm_service，测试不调用真实大模型，返回足够长的模拟文本
+import services.diary_service as diary_service  # noqa: E402
+
+diary_service.chat_completion = lambda messages, **kwargs: (
+    "今天完成了一次专注学习，整体状态不错，遇到难点时没有放弃，"
+    "而是慢慢拆解、逐个解决，最后顺利完成了计划，值得肯定。"
+)
 
 client = app.test_client()
 
