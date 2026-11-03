@@ -1,0 +1,179 @@
+
+/* 右侧主区域 */
+.main-content {
+    flex: 1;
+    height: 100vh;
+    position: relative;
+    overflow: hidden;
+
+    /* 临时梦幻背景，之后替换成你的图片 */
+    background:
+        radial-gradient(circle at 75% 35%,
+            rgba(255, 238, 250, 0.9),
+            transparent 35%),
+        linear-gradient(135deg,
+            #c9c3e5,
+            #e8d5e8 50%,
+            #b9c9df);
+}
+
+/* 欢迎文字 */
+.welcome-text {
+    position: absolute;
+    top: 13%;
+    left: 9%;
+    z-index: 2;
+    color: #514663;
+}
+
+.welcome-text p {
+    font-size: 12px;
+    letter-spacing: 4px;
+    margin-bottom: 18px;
+    color: #84718f;
+}
+
+.welcome-text h1 {
+    font-size: 36px;
+    margin-bottom: 15px;
+}
+
+.welcome-text > span {
+    font-size: 15px;
+    color: #74677e;
+}
+
+/* 人物展示区域 */
+.character-area {
+    position: absolute;
+    right: 10%;
+    bottom: 8%;
+    width: 45%;
+    height: 78%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+/* 人物占位区域 */
+.character-placeholder {
+    position: relative;
+    width: 300px;
+    height: 420px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* 人物背后的光圈 */
+.character-halo {
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.35);
+    filter: blur(10px);
+}
+
+/* 临时人物 */
+.character-figure {
+    position: relative;
+    width: 190px;
+    height: 340px;
+    z-index: 1;
+}
+
+/* 头部 */
+.character-head {
+    position: absolute;
+    top: 25px;
+    left: 45px;
+    width: 100px;
+    height: 115px;
+    border-radius: 48% 48% 45% 45%;
+    background: #f4d5d5;
+    z-index: 2;
+}
+
+/* 头发 */
+.character-hair {
+    position: absolute;
+    top: 10px;
+    left: 30px;
+    width: 130px;
+    height: 150px;
+    border-radius: 50% 50% 40% 40%;
+    background: #756482;
+    z-index: 1;
+}
+
+/* 身体 */
+.character-body {
+    position: absolute;
+    top: 130px;
+    left: 20px;
+    width: 150px;
+    height: 205px;
+    border-radius: 55px 55px 20px 20px;
+    background: linear-gradient(135deg, #f4e6f2, #c7b2d8);
+    z-index: 3;
+}
+
+/* 人物信息 */
+.character-info {
+    text-align: center;
+    color: #574967;
+    z-index: 2;
+    margin-bottom: 15px;
+}
+
+.character-info span {
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: #887694;
+}
+
+.character-info h2 {
+    margin: 8px 0;
+    font-size: 23px;
+}
+
+.character-info p {
+    font-size: 13px;
+}
+
+/* 星星装饰 */
+.star {
+    position: absolute;
+    color: white;
+    font-size: 30px;
+    opacity: 0.8;
+}
+
+.star-one {
+    top: 20%;
+    right: 20%;
+}
+
+.star-two {
+    top: 45%;
+    left: 15%;
+    font-size: 22px;
+}
+
+.star-three {
+    bottom: 20%;
+    left: 40%;
+    font-size: 18px;
+}
+
+/* 底部提示 */
+.home-tip {
+    position: absolute;
+    bottom: 35px;
+    left: 9%;
+    color: #786b87;
+    font-size: 13px;
+    letter-spacing: 1px;
+}

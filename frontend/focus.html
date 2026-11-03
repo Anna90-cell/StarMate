@@ -1,0 +1,97 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>专注空间 - StarMate</title>
+
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/focus.css">
+</head>
+
+<body>
+
+    <header>
+        <h1>专注空间</h1>
+        <p>让我们一起完成今天的目标</p>
+    </header>
+
+    <main>
+        <section class="companion-scene">
+            <div class="scene-character">
+                <div class="scene-hair"></div>
+                <div class="scene-head"></div>
+                <div class="scene-body"></div>
+            </div>
+
+            <div class="scene-info">
+                <h2 id="scene-name">我的伙伴</h2>
+                <p>今天也一起加油吧！</p>
+            </div>
+        </section>
+        
+        <div class="left-panel">
+
+            <section id="todo-section">
+                <h2>当前学习任务</h2>
+                <input type="text" id="taskInput" placeholder="输入任务，按回车添加">
+                <ul id="todo-list"></ul>
+            </section>
+
+            <section id="timer-section">
+                <h2>专注计时</h2>
+                <div id="timer">25:00</div>
+
+                <button id="startBtn">开始专注</button>
+                <button id="pauseBtn">暂停</button>
+                <button id="resetBtn">重置</button>
+            </section>
+
+        </div>
+
+        <div class="right-panel">
+            <section id="mood-section">
+                <h2>当前心情</h2>
+                <button data-mood="happy">开心</button>
+                <button data-mood="sad">难过</button>
+                <button data-mood="tired">疲惫</button>
+                <button data-mood="calm">平静</button>
+            </section>
+
+            <section id="diary-section">
+                <h2>陪伴日记</h2>
+                <div id="diaryPreview">
+                    <p>完成专注后，这里将展示陪伴日记</p>
+                </div>
+            </section>
+        </div>
+
+        <!-- 专注结束提示 -->
+        <section id="focus-end-screen" hidden>
+            <div class="end-card">
+                <h2>🎉 专注时间结束啦！</h2>
+                <p>辛苦啦！你已经完成了一段专注时间。</p>
+                <p id="end-message">伙伴：今天的你也很棒哦！</p>
+                <button id="exitFocusBtn">退出专注</button>
+            </div>
+        </section>
+
+        <!-- 人物旁边的聊天输入栏 -->
+        <section id="chat-section">
+            <div class="chat-bar">
+                <input type="text" id="chatInput" placeholder="聊天...">
+                <button id="sendBtn">发送</button>
+            </div>
+        </section>
+
+        <div id="normal-actions">
+            <a href="companion.html">返回伙伴主页</a>
+            <a href = "index.html">返回首页</a>
+        </div>
+
+    </main>
+    <script src="js/scene.js"></script>
+    <script src="js/foucs.js"></script>
+</body>
+</html>

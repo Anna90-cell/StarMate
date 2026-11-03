@@ -6,6 +6,7 @@ StarMate 后端完整接口测试（不依赖 pytest，直接运行：
 
 测试在独立的临时数据目录中进行，不会污染 data/ 下的真实数据。
 """
+import json
 import os
 import sys
 import tempfile
@@ -22,6 +23,23 @@ TEMP_DATA_DIR = tempfile.mkdtemp(prefix="starmate_test_")
 storage.DATA_DIR = TEMP_DATA_DIR
 
 from app import app  # noqa: E402
+
+# 测试不调用真实大模型：用固定人设替掉 companion_service 里的 LLM 调用。
+# 否则没配 DEEPSEEK_API_KEY 的机器（以及 CI）连测试都跑不起来。
+import services.companion_service as companion_service  # noqa: E402
+
+
+def _fake_chat_completion(messages, **kwargs):
+    return json.dumps({
+        "name": "小星",
+        "appearance": "银色长发，蓝色眼睛，穿白色卫衣",
+        "personality": ["温柔", "耐心", "会鼓励人"],
+        "speaking_style": "温柔、简短，偶尔用颜文字",
+        "companion_style": "学习搭子",
+    }, ensure_ascii=False)
+
+
+companion_service.chat_completion = _fake_chat_completion
 
 client = app.test_client()
 
