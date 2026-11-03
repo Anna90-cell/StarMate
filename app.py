@@ -648,7 +648,8 @@ def claim_reward():
             404
         )
 
-    result = claim_session_reward(companion, session, claimed_sessions)
+    # history 用于「连续两次 +5」「每日目标 +10」的结算（规则见 reward_service）
+    result = claim_session_reward(companion, session, claimed_sessions, history)
 
     if result is None:
         return error_response(
