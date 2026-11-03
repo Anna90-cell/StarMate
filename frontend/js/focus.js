@@ -192,7 +192,7 @@
       actualMinutes = Math.max(0, Math.round(spentSeconds / 60));
     }
 
-    state.remainingSeconds = left;
+    state.remainingSeconds = state.totalSeconds;
     state.status = 'finished';
     state.totalSeconds = state.totalSeconds || plannedMinutes * 60;
 
@@ -214,19 +214,27 @@
     return snapshot();
   }
 
-  function reset() {
-    stopTicking();
-    state.status = 'idle';
-    state.task = '';
-    state.totalSeconds = 0;
-    state.remainingSeconds = 0;
-    state.startedAt = null;
-    state.demo = false;
-    emit('reset', snapshot());
-    emit('tick', snapshot());
-    setPet('idle');
-    return snapshot();
-  }
+
+    function reset() {
+        stopTicking();
+
+        state.status = 'idle';
+        state.task = '';
+
+        // 恢复默认专注时长
+        state.totalSeconds = config.focusMinutes * 60;
+        state.remainingSeconds = state.totalSeconds;
+
+        state.startedAt = null;
+        state.demo = false;
+
+        emit('reset', snapshot());
+        emit('tick', snapshot());
+
+        setPet('idle');
+        return snapshot();
+    }
+
 
   function configure(options) {
     options = options || {};

@@ -119,6 +119,26 @@
 
         </section>
 
+        
+        <!-- 伙伴成长面板 -->
+        <section id="growth-panel">
+            <div class="growth-header">
+                <h2>伙伴成长</h2>
+                <span id="pet-level">Lv.1</span>
+            </div>
+
+            <div class="growth-exp">
+                <span>经验值：</span>
+                <span id="pet-exp">0</span>
+                <span> / </span>
+                <span id="pet-next">30</span>
+                <span> EXP</span>
+            </div>
+
+            <progress id="pet-exp-bar" value="0" max="100"></progress>
+        </section>
+
+
         <div class="companion-actions">
             <a href="focus.html" class="action-btn">进入专注空间</a>
 
@@ -131,7 +151,11 @@
 
 </div>
 
+
+<script src="js/c-api.js"></script>
+<script src="js/growth.js"></script>
 <script src="js/companion.js"></script>
+
 
 </body>
 </html>

@@ -43,59 +43,69 @@ const backgroundStyles = {
 
 // 三、读取创建页面保存的数据
 
+
 function loadCompanion() {
 
-    const savedData = JSON.parse(localStorage.getItem("starMateData"));
+    // 读取创建页面保存的数据
+    const savedData = JSON.parse(
+        localStorage.getItem("starMateData") || "null"
+    );
 
     // 获取伙伴房间
-    const companionRoom = document.querySelector(".companion-room");
+    const companionRoom = document.body;
 
-    if (companionRoom) {
+    if (!companionRoom) return;
+
+    // 没有创建伙伴时，使用默认背景
+    if (!savedData) {
         companionRoom.style.background =
-    backgroundStyles[savedData.background];
-
-        console.log("伙伴房间元素：", companionRoom);
-        console.log("实际背景：", getComputedStyle(companionRoom).background);
+            "linear-gradient(135deg, #c9c3e5, #ead9e9, #b9c9df)";
+        return;
     }
-    // // 根据用户选择设置伙伴房间背景
-    // if (savedData && backgroundStyles[savedData.background]) {
-    //     companionRoom.style.background =
-    //         backgroundStyles[savedData.background];
-    // }
 
-    // console.log(savedData.background);
+    // 有伙伴数据时，使用创建时选择的背景
+    companionRoom.style.background =
+        backgroundStyles[savedData.background] ||
+        backgroundStyles.background1;
 
-    // // 如果没有保存过伙伴信息
-    // if (!savedData) {
-    //     companionDisplay.style.display = "none";
-    //     emptyState.style.display = "flex";
-    //     return;
-    // }
-
-    // // 获取人物对应的颜色
-    // const colors = characterColors[userData.character];
-
-    // // 如果人物数据无效，也显示未创建状态
-    // if (!colors) {
-    //     companionDisplay.style.display = "none";
-    //     emptyState.style.display = "flex";
-    //     return;
-    // }
-
-    // // 显示伙伴
-    // emptyState.style.display = "none";
-    // companionDisplay.style.display = "flex";
-
-    // // 更新伙伴名称
-    // companionName.textContent = userData.name || "我的伙伴";
-
-    // // 更新人物颜色
-    // companionHair.style.background = colors.hair;
-    // companionBody.style.background = colors.body;
-
+    console.log("伙伴房间元素：", companionRoom);
+    console.log("实际背景：", getComputedStyle(companionRoom).background);
 }
+
 
 
 // 四、页面加载时执行
 
 loadCompanion();
+
+
+/* 五、初始化伙伴成长面板 */
+
+function loadGrowth() {
+    // 检查成长模块是否已经加载
+    if (!window.StarMateGrowth) {
+        console.error("StarMateGrowth 未加载");
+        return;
+    }
+
+    // 绑定 HTML 中的经验值显示元素
+    StarMateGrowth.mount({
+        level: "#pet-level",
+        exp: "#pet-exp",
+        next: "#pet-next",
+        bar: "#pet-exp-bar"
+    });
+
+    // 获取后端保存的经验值，并更新界面
+    StarMateGrowth.refresh()
+        .then(function (data) {
+            console.log("伙伴成长数据加载成功：", data);
+        })
+        .catch(function (error) {
+            console.error("伙伴成长数据加载失败：", error);
+        });
+}
+
+// 页面加载时初始化成长面板
+loadGrowth();
+
