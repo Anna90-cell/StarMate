@@ -25,7 +25,8 @@ from services.reward_service import (
 from services.storage import load_json, save_json
 from services.llm_service import LLMServiceError
 
-load_dotenv()
+# 显式基于本文件所在目录加载 .env，避免后台启动/工作目录不同时找不到配置
+load_dotenv(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env"))
 
 app = Flask(__name__)
 CORS(app)
