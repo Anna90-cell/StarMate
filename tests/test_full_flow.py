@@ -30,7 +30,6 @@ import services.chat_service as chat_service  # noqa: E402
 def _fake_companion(messages, **kwargs):
     return json.dumps({
         "name": "小星",
-        "appearance": "银色长发，蓝色眼睛，穿白色卫衣",
         "personality": ["温柔", "耐心", "会鼓励人"],
         "speaking_style": "温柔、简短，偶尔用颜文字",
         "companion_style": "学习搭子",
@@ -51,7 +50,8 @@ def step(name, condition):
 
 # 第一幕：创造专属伙伴
 resp = client.post("/api/companion/generate",
-                   json={"description": "温柔活泼的猫耳少女"})
+                   json={"description": "温柔活泼的猫耳少女",
+                         "avatar_id": "orange_cat"})
 companion_data = resp.get_json()["data"]
 step("1. 生成伙伴", resp.status_code == 200 and companion_data["name"])
 

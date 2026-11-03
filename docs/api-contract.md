@@ -84,9 +84,16 @@
 
 ``` json
 {
-  "description": "温柔、活泼、有一点幽默感，喜欢小动物"
+  "description": "温柔、活泼、有一点幽默感，喜欢小动物",
+  "avatar_id": "orange_cat"
 }
 ```
+
+字段说明：
+
+- `description`：用户的文字描述，必填。
+- `avatar_id`：用户从预设形象库中选择的形象标识（如 `orange_cat`、`white_rabbit`），
+  必填。外貌形象不由 AI 生成，后端保存 avatar_id，前端据此加载对应 PNG 和桌宠素材。
 
 成功响应：
 
@@ -95,7 +102,6 @@
   "success": true,
   "data": {
     "name": "小橘",
-    "appearance": "橘色猫耳、棕色短发",
     "personality": ["温柔", "活泼", "幽默"],
     "speaking_style": "亲切、简短、偶尔开玩笑",
     "companion_style": "鼓励为主，不严厉催促"
@@ -103,13 +109,14 @@
 }
 ```
 
-负责关系：A 提交用户描述；D 接收请求并调用 B 提供的角色生成函数；B 负责
-Prompt 和模型返回结果。此接口只生成设定，不负责选择头像图片。
+负责关系：A 提供预设形象库选择并提交用户描述与 avatar_id；D 接收请求、保存
+avatar_id 并调用 B 提供的角色生成函数；B 负责 Prompt 和文字人设结果，只整理
+`name`、`personality`、`speaking_style`、`companion_style` 四个字段，不生成外貌。
 
 **首次创建伙伴 +5 EXP**：如果之前还没有伙伴，这个接口在保存时会调用
 `reward_service.grant_companion_created_bonus()` 给 `companion.exp` 加 5。
-只是修改人设（已经有伙伴了）不会重复加。返回值仍然只有上面 5 个人设字段，
-经验值要用 `GET /api/companion` 或 `GET /api/reward` 读。
+只是修改人设（已经有伙伴了）不会重复加。返回值只有上面 4 个文字人设字段，
+avatar_id 与经验值要用 `GET /api/companion` 或 `GET /api/reward` 读。
 
 ### 3.2 获取伙伴信息
 
@@ -122,11 +129,10 @@ Prompt 和模型返回结果。此接口只生成设定，不负责选择头像�
   "success": true,
   "data": {
     "name": "小橘",
-    "appearance": "橘色猫耳、棕色短发",
     "personality": ["温柔", "活泼"],
     "speaking_style": "亲切幽默",
     "companion_style": "鼓励为主",
-    "avatar": "orange_cat.png",
+    "avatar_id": "orange_cat",
     "room": "study_room.jpg",
     "level": 1,
     "exp": 5
@@ -145,11 +151,10 @@ Prompt 和模型返回结果。此接口只生成设定，不负责选择头像�
 ``` json
 {
   "name": "小橘",
-  "appearance": "橘色猫耳、棕色短发",
   "personality": ["温柔", "活泼"],
   "speaking_style": "亲切幽默",
   "companion_style": "鼓励为主",
-  "avatar": "orange_cat.png",
+  "avatar_id": "orange_cat",
   "room": "study_room.jpg"
 }
 ```

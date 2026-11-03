@@ -113,13 +113,13 @@ def update_companion():
         )
 
     # level、exp 由成长系统维护，不允许前端通过此接口修改
+    # 外貌走预设形象库，前端只传 avatar_id；appearance/旧 avatar 字段已废弃
     allowed_fields = [
         "name",
-        "appearance",
         "personality",
         "speaking_style",
         "companion_style",
-        "avatar",
+        "avatar_id",
         "room"
     ]
 
@@ -160,12 +160,21 @@ def create_companion():
             400
         )
 
+    # 外貌由用户从预设形象库选择，前端传 avatar_id（如 orange_cat、white_rabbit）
+    avatar_id = data.get("avatar_id")
+
+    if not isinstance(avatar_id, str) or not avatar_id.strip():
+        return error_response(
+            "INVALID_ARGUMENT",
+            "avatar_id 不能为空，请先选择预设形象",
+            400
+        )
+
     # 调用 B 提供的人设生成函数（当前为 Mock，B 完成后替换为真实 AI 调用）
     generated_data = generate_companion(description.strip())
 
     required_fields = [
         "name",
-        "appearance",
         "personality",
         "speaking_style",
         "companion_style"
@@ -188,13 +197,15 @@ def create_companion():
 
     if is_new_companion:
         companion = {
-            "avatar": "",
+            "avatar_id": "",
             "room": "default",
             "level": 1,
             "exp": 0
         }
 
     companion.update(generated_data)
+    # 形象由前端预设库选择，avatar_id 单独保存，不交给 AI
+    companion["avatar_id"] = avatar_id
 
     if is_new_companion:
         grant_companion_created_bonus(companion)

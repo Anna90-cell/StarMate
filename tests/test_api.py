@@ -32,7 +32,6 @@ import services.companion_service as companion_service  # noqa: E402
 def _fake_chat_completion(messages, **kwargs):
     return json.dumps({
         "name": "小星",
-        "appearance": "银色长发，蓝色眼睛，穿白色卫衣",
         "personality": ["温柔", "耐心", "会鼓励人"],
         "speaking_style": "温柔、简短，偶尔用颜文字",
         "companion_style": "学习搭子",
@@ -95,19 +94,24 @@ resp = client.get("/api/companion")
 check("未创建伙伴时 GET /api/companion 返回 data=null",
       resp.status_code == 200 and resp.get_json()["data"] is None)
 
-resp = post_json("/api/companion/generate", {"description": "想要一个温柔的猫耳少女"})
+resp = post_json("/api/companion/generate",
+                 {"description": "想要一个温柔的猫耳少女", "avatar_id": "orange_cat"})
 body = resp.get_json()
 check("POST /api/companion/generate 成功",
       resp.status_code == 200 and body["success"], str(body))
 generated = body["data"]
-check("生成结果包含 5 个约定字段",
+check("生成结果包含 4 个约定字段",
       all(k in generated for k in
-          ["name", "appearance", "personality", "speaking_style", "companion_style"]),
+          ["name", "personality", "speaking_style", "companion_style"]),
       str(generated))
 check("personality 是数组", isinstance(generated["personality"], list))
 
 resp = post_json("/api/companion/generate", {"description": "   "})
 check("description 为空 -> 400", resp.status_code == 400)
+
+resp = post_json("/api/companion/generate",
+                 {"description": "没传形象id"})
+check("avatar_id 缺失 -> 400", resp.status_code == 400)
 
 resp = client.post("/api/companion/generate",
                     data="not-json", content_type="application/json")
@@ -120,14 +124,15 @@ check("生成后 GET /api/companion 有数据",
 check("首次创建伙伴自动 +5 EXP",
       resp.get_json()["data"]["exp"] == 5, str(resp.get_json()))
 
-resp = post_json("/api/companion/generate", {"description": "换一个更活泼的性格"})
+resp = post_json("/api/companion/generate",
+                 {"description": "换一个更活泼的性格", "avatar_id": "white_rabbit"})
 body = resp.get_json()
 check("重新生成人设不给重复经验",
       resp.status_code == 200
       and client.get("/api/companion").get_json()["data"]["exp"] == 5,
       str(body))
 
-resp = put_json("/api/companion", {"name": "小橘", "avatar": "orange_cat.png"})
+resp = put_json("/api/companion", {"name": "小橘", "avatar_id": "orange_cat"})
 check("PUT /api/companion 正常更新",
       resp.status_code == 200 and resp.get_json()["data"]["saved"] is True)
 
