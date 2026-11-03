@@ -151,7 +151,15 @@ def create_companion():
             400
         )
 
+    name = data.get("name")
     description = data.get("description")
+
+    if not isinstance(name, str) or not name.strip():
+        return error_response(
+            "INVALID_ARGUMENT",
+            "name 不能为空",
+            400
+        )
 
     if not isinstance(description, str) or not description.strip():
         return error_response(
@@ -160,18 +168,9 @@ def create_companion():
             400
         )
 
-    # 外貌由用户从预设形象库选择，前端传 avatar_id（如 orange_cat、white_rabbit）
-    avatar_id = data.get("avatar_id")
-
-    if not isinstance(avatar_id, str) or not avatar_id.strip():
-        return error_response(
-            "INVALID_ARGUMENT",
-            "avatar_id 不能为空，请先选择预设形象",
-            400
-        )
-
-    # 调用 B 提供的人设生成函数（当前为 Mock，B 完成后替换为真实 AI 调用）
-    generated_data = generate_companion(description.strip())
+    # 调用 B 提供的人设生成函数：名字用户填写，AI 只整理性格/风格三字段
+    # avatar_id 不在此接口处理，由前端随后通过 PUT /api/companion 保存
+    generated_data = generate_companion(name.strip(), description.strip())
 
     required_fields = [
         "name",
@@ -189,7 +188,7 @@ def create_companion():
             502
         )
 
-    # 保留已有的头像、房间、等级和经验值，只更新人设字段
+    # 保留已有的头像、房间、等级和经验值，只更新文字人设字段
     companion = load_json("companion.json")
 
     # 只有"之前根本没有伙伴"的这一次才算首次创建，改人设不算
@@ -204,8 +203,6 @@ def create_companion():
         }
 
     companion.update(generated_data)
-    # 形象由前端预设库选择，avatar_id 单独保存，不交给 AI
-    companion["avatar_id"] = avatar_id
 
     if is_new_companion:
         grant_companion_created_bonus(companion)

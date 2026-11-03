@@ -80,20 +80,20 @@
 
 `POST /api/companion/generate`
 
-请求：
+请求（混合模式：用户填名字，性格和风格写在一个描述框里）：
 
 ``` json
 {
-  "description": "温柔、活泼、有一点幽默感，喜欢小动物",
-  "avatar_id": "orange_cat"
+  "name": "小星",
+  "description": "希望它温柔耐心，平时可以陪我聊天，学习时能鼓励我"
 }
 ```
 
 字段说明：
 
-- `description`：用户的文字描述，必填。
-- `avatar_id`：用户从预设形象库中选择的形象标识（如 `orange_cat`、`white_rabbit`），
-  必填。外貌形象不由 AI 生成，后端保存 avatar_id，前端据此加载对应 PNG 和桌宠素材。
+- `name`：用户自己填写的角色名字，必填，2～8 个汉字，后端原样保留、不交给 AI 改动。
+- `description`：用户对性格、说话风格、陪伴方式的自由描述，必填。
+- `avatar_id` 不在本接口处理；用户选择预设形象后，由前端通过 `PUT /api/companion` 保存。
 
 成功响应：
 
@@ -101,17 +101,17 @@
 {
   "success": true,
   "data": {
-    "name": "小橘",
-    "personality": ["温柔", "活泼", "幽默"],
-    "speaking_style": "亲切、简短、偶尔开玩笑",
-    "companion_style": "鼓励为主，不严厉催促"
+    "name": "小星",
+    "personality": ["温柔", "耐心"],
+    "speaking_style": "自然亲切",
+    "companion_style": "学习时给予鼓励，平时可以轻松聊天"
   }
 }
 ```
 
-负责关系：A 提供预设形象库选择并提交用户描述与 avatar_id；D 接收请求、保存
-avatar_id 并调用 B 提供的角色生成函数；B 负责 Prompt 和文字人设结果，只整理
-`name`、`personality`、`speaking_style`、`companion_style` 四个字段，不生成外貌。
+负责关系：A 收集用户填写的 name 与描述框；D 接收请求并调用 B 提供的角色生成函数；
+B 负责 Prompt 和文字人设结果，只整理 `personality`、`speaking_style`、
+`companion_style` 三个字段，不取名、不生成外貌。
 
 **首次创建伙伴 +5 EXP**：如果之前还没有伙伴，这个接口在保存时会调用
 `reward_service.grant_companion_created_bonus()` 给 `companion.exp` 加 5。

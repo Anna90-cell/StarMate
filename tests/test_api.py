@@ -31,7 +31,6 @@ import services.companion_service as companion_service  # noqa: E402
 
 def _fake_chat_completion(messages, **kwargs):
     return json.dumps({
-        "name": "小星",
         "personality": ["温柔", "耐心", "会鼓励人"],
         "speaking_style": "温柔、简短，偶尔用颜文字",
         "companion_style": "学习搭子",
@@ -95,7 +94,7 @@ check("未创建伙伴时 GET /api/companion 返回 data=null",
       resp.status_code == 200 and resp.get_json()["data"] is None)
 
 resp = post_json("/api/companion/generate",
-                 {"description": "想要一个温柔的猫耳少女", "avatar_id": "orange_cat"})
+                 {"name": "小星", "description": "想要一个温柔的猫耳少女"})
 body = resp.get_json()
 check("POST /api/companion/generate 成功",
       resp.status_code == 200 and body["success"], str(body))
@@ -106,12 +105,13 @@ check("生成结果包含 4 个约定字段",
       str(generated))
 check("personality 是数组", isinstance(generated["personality"], list))
 
-resp = post_json("/api/companion/generate", {"description": "   "})
+resp = post_json("/api/companion/generate",
+                 {"name": "小星", "description": "   "})
 check("description 为空 -> 400", resp.status_code == 400)
 
 resp = post_json("/api/companion/generate",
-                 {"description": "没传形象id"})
-check("avatar_id 缺失 -> 400", resp.status_code == 400)
+                 {"description": "没传名字"})
+check("name 缺失 -> 400", resp.status_code == 400)
 
 resp = client.post("/api/companion/generate",
                     data="not-json", content_type="application/json")
@@ -125,7 +125,7 @@ check("首次创建伙伴自动 +5 EXP",
       resp.get_json()["data"]["exp"] == 5, str(resp.get_json()))
 
 resp = post_json("/api/companion/generate",
-                 {"description": "换一个更活泼的性格", "avatar_id": "white_rabbit"})
+                 {"name": "小星", "description": "换一个更活泼的性格"})
 body = resp.get_json()
 check("重新生成人设不给重复经验",
       resp.status_code == 200
