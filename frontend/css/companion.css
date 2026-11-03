@@ -223,3 +223,98 @@
     color: white;
     transform: translateY(-3px);
 }
+
+
+/* ===== 伙伴成长面板美化 ===== */
+
+#growth-panel {
+    width: 100%;
+    box-sizing: border-box;
+    margin: 24px 0;
+    padding: 24px 28px;
+
+    background: rgba(255, 255, 255, 0.82);
+    border-radius: 20px;
+
+    box-shadow: 0 6px 20px rgba(120, 95, 150, 0.10);
+}
+
+/* 标题和等级 */
+.growth-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+}
+
+.growth-header h2 {
+    margin: 0;
+    color: #79618F;
+    font-size: 22px;
+}
+
+#pet-level {
+    padding: 6px 14px;
+    border-radius: 20px;
+    background: #E9DDF2;
+    color: #79618F;
+    font-weight: bold;
+}
+
+/* 经验数值 */
+.growth-exp {
+    margin-bottom: 12px;
+    color: #8A789A;
+    font-size: 15px;
+}
+
+#pet-exp,
+#pet-next {
+    font-weight: bold;
+    color: #79618F;
+}
+
+/* 横向经验进度条 */
+#pet-exp-bar {
+    display: block;
+    width: 100%;
+    height: 20px;
+
+    appearance: none;
+    -webkit-appearance: none;
+
+    border: none;
+    border-radius: 20px;
+    overflow: hidden;
+
+    background: #E8DDF1;
+}
+
+/* Chrome / Edge */
+#pet-exp-bar::-webkit-progress-bar {
+    background: #E8DDF1;
+    border-radius: 20px;
+}
+
+#pet-exp-bar::-webkit-progress-value {
+    background: linear-gradient(90deg, #B59ACD, #9071B4);
+    border-radius: 20px;
+    transition: width 0.5s ease;
+}
+
+/* Firefox */
+#pet-exp-bar::-moz-progress-bar {
+    background: linear-gradient(90deg, #B59ACD, #9071B4);
+    border-radius: 20px;
+}
+
+html {
+    min-height: 100%;
+    background: linear-gradient(135deg, #c9c3e5, #ead9e9, #b9c9df);
+    background-attachment: fixed;
+}
+
+body {
+    min-height: 100vh;
+    background: transparent;
+}

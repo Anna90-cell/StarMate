@@ -9,7 +9,8 @@
 /* 页面基础设置 */
 body {
     font-family: "Microsoft YaHei", sans-serif;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 /* 整体布局 */

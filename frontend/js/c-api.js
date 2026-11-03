@@ -1,3 +1,14 @@
+
+// window.StarMatePet = {
+//     currentState: "idle",
+
+//     setState: function (name) {
+//         this.currentState = name;
+
+//         console.log("伙伴当前状态：", name);
+//     }
+// };
+
 /*!
  * StarMate · C 模块 · 统一请求封装（c-api.js）
  *
@@ -71,18 +82,3 @@
 
   global.StarMateC = api;
 })(typeof window !== 'undefined' ? window : this);
-
-/* ---------------------------------------------------------------------------
- * 临时兼容：A 之前在 c-api.js 里定义了桌宠接口（应放在 pet.js）。
- * 合并时保留下来，等 A 把 pet.js 建好后删掉这一段。
- * C 的 focus.js 会在开始/结束专注时调用 StarMatePet.setState(...)。
- * ------------------------------------------------------------------------- */
-window.StarMatePet = window.StarMatePet || {
-  currentState: "idle",
-
-  setState: function (name) {
-    this.currentState = name;
-
-    if (window.console) console.log("伙伴当前状态：", name);
-  }
-};
