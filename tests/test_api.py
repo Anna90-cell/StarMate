@@ -41,6 +41,11 @@ def _fake_chat_completion(messages, **kwargs):
 
 companion_service.chat_completion = _fake_chat_completion
 
+# 聊天路径走 chat_service -> llm_service，测试不调用真实大模型，固定返回模拟回复
+import services.chat_service as chat_service  # noqa: E402
+
+chat_service.chat_completion = lambda messages, **kwargs: "测试回复：我陪着你，慢慢来。"
+
 client = app.test_client()
 
 PASS_COUNT = 0
