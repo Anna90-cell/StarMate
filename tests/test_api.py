@@ -112,6 +112,16 @@ resp = client.get("/api/companion")
 check("生成后 GET /api/companion 有数据",
       resp.status_code == 200 and resp.get_json()["data"]["name"])
 
+check("首次创建伙伴自动 +5 EXP",
+      resp.get_json()["data"]["exp"] == 5, str(resp.get_json()))
+
+resp = post_json("/api/companion/generate", {"description": "换一个更活泼的性格"})
+body = resp.get_json()
+check("重新生成人设不给重复经验",
+      resp.status_code == 200
+      and client.get("/api/companion").get_json()["data"]["exp"] == 5,
+      str(body))
+
 resp = put_json("/api/companion", {"name": "小橘", "avatar": "orange_cat.png"})
 check("PUT /api/companion 正常更新",
       resp.status_code == 200 and resp.get_json()["data"]["saved"] is True)

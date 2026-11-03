@@ -10,7 +10,11 @@ from services.companion_service import generate_companion
 from services.diary_service import generate_diary
 from services.focus_service import create_focus_session
 from services.mood_service import save_mood
-from services.reward_service import get_reward_info, claim_session_reward
+from services.reward_service import (
+    get_reward_info,
+    claim_session_reward,
+    grant_companion_created_bonus
+)
 from services.storage import load_json, save_json
 
 app = Flask(__name__)
@@ -169,7 +173,10 @@ def create_companion():
     # 保留已有的头像、房间、等级和经验值，只更新人设字段
     companion = load_json("companion.json")
 
-    if not isinstance(companion, dict):
+    # 只有"之前根本没有伙伴"的这一次才算首次创建，改人设不算
+    is_new_companion = not isinstance(companion, dict)
+
+    if is_new_companion:
         companion = {
             "avatar": "",
             "room": "default",
@@ -178,6 +185,10 @@ def create_companion():
         }
 
     companion.update(generated_data)
+
+    if is_new_companion:
+        grant_companion_created_bonus(companion)
+
     save_json("companion.json", companion)
 
     return jsonify({

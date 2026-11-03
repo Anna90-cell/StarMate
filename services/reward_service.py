@@ -24,6 +24,7 @@ MIN_FOCUS_MINUTES = 25
 EXP_FOCUS_COMPLETE = 10
 EXP_STREAK_BONUS = 5
 EXP_DAILY_GOAL = 10
+EXP_FIRST_COMPANION = 5
 
 
 def _safe_int(value, fallback):
@@ -156,4 +157,20 @@ def claim_session_reward(companion, session, claimed_sessions, history=None):
         "total_exp": total_exp,
         "level": new_level,
         "leveled_up": new_level > old_level
+    }
+
+
+def grant_companion_created_bonus(companion):
+    """首次创建伙伴 +5 EXP，直接改传入的 companion 字典并返回本次结果。
+
+    只在"之前没有伙伴"的那一次创建时调用；用户后来改人设、重新生成都不算首次。
+    """
+    exp = _safe_int(companion.get("exp"), 0) + EXP_FIRST_COMPANION
+    companion["exp"] = exp
+    companion["level"] = calculate_level(exp)
+
+    return {
+        "earned_exp": EXP_FIRST_COMPANION,
+        "total_exp": exp,
+        "level": companion["level"]
     }

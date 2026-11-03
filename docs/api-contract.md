@@ -106,6 +106,11 @@
 负责关系：A 提交用户描述；D 接收请求并调用 B 提供的角色生成函数；B 负责
 Prompt 和模型返回结果。此接口只生成设定，不负责选择头像图片。
 
+**首次创建伙伴 +5 EXP**：如果之前还没有伙伴，这个接口在保存时会调用
+`reward_service.grant_companion_created_bonus()` 给 `companion.exp` 加 5。
+只是修改人设（已经有伙伴了）不会重复加。返回值仍然只有上面 5 个人设字段，
+经验值要用 `GET /api/companion` 或 `GET /api/reward` 读。
+
 ### 3.2 获取伙伴信息
 
 `GET /api/companion`
