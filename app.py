@@ -4,14 +4,24 @@ from datetime import datetime
 
 from flask import Flask, jsonify, request
 from flask_cors import CORS
+from dotenv import load_dotenv
 
-from services.chat_service import chat_with_companion
+from services.chat_service import (
+    ChatContextError,
+    ChatFormatError,
+    ChatInputError,
+    chat_with_companion,
+)
 from services.companion_service import generate_companion
 from services.diary_service import generate_diary
 from services.focus_service import create_focus_session
+from services.memory_service import merge_memory_update, update_recent_sessions
 from services.mood_service import save_mood
 from services.reward_service import get_reward_info, claim_session_reward
 from services.storage import load_json, save_json
+from services.llm_service import LLMServiceError
+
+load_dotenv()
 
 app = Flask(__name__)
 CORS(app)
@@ -249,7 +259,7 @@ def chat():
         memory = {}
 
     try:
-        reply = chat_with_companion(
+        result = chat_with_companion(
             message=message.strip(),
             mode=mode,
             task=task,
@@ -258,19 +268,14 @@ def chat():
             history=history,
             memory=memory
         )
-    except Exception:
-        return error_response(
-            "AI_SERVICE_ERROR",
-            "AI 服务暂时不可用，请稍后再试",
-            502
-        )
+    except ChatInputError as exc:
+        return error_response("INVALID_ARGUMENT", str(exc), 400)
+    except ChatContextError as exc:
+        return error_response("INTERNAL_ERROR", str(exc), 500)
+    except (ChatFormatError, LLMServiceError) as exc:
+        return error_response("AI_SERVICE_ERROR", str(exc), 502)
 
-    if not isinstance(reply, str) or not reply.strip():
-        return error_response(
-            "AI_SERVICE_ERROR",
-            "AI 返回内容异常",
-            502
-        )
+    reply = result["reply"]
 
     history.append({"role": "user", "content": message.strip()})
     history.append({"role": "assistant", "content": reply})
@@ -279,6 +284,11 @@ def chat():
     history = history[-10:]
     save_json("chat_history.json", history)
 
+    # 由 D 合并 B 给出的 memory_update，recent_sessions 不在此处更新
+    updated_memory = merge_memory_update(memory, result.get("memory_update"))
+    save_json("memory.json", updated_memory)
+
+    # 只向 A 返回 reply，memory_update 不暴露给前端
     return jsonify({
         "success": True,
         "data": {"reply": reply}
@@ -379,6 +389,11 @@ def create_session():
 
     history.append(session)
     save_json("history.json", history)
+
+    # recent_sessions 由后端维护：新→旧、最多 3 条，B 直接取前 3 条即可
+    memory = load_json("memory.json", {})
+    memory = update_recent_sessions(memory, session)
+    save_json("memory.json", memory)
 
     return jsonify({
         "success": True,
