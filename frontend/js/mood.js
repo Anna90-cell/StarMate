@@ -117,6 +117,10 @@
     root.addEventListener('click', function (event) {
       var btn = event.target.closest ? event.target.closest('[data-mood]') : null;
       if (!btn || !root.contains(btn)) return;
+
+      event.preventDefault();
+      event.stopPropagation();
+
       var value = Number(btn.getAttribute('data-mood'));
       set(stage, value);
       paint(value);

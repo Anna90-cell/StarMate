@@ -2,7 +2,7 @@ import os
 import uuid
 from datetime import datetime
 
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 from dotenv import load_dotenv
 
@@ -28,7 +28,9 @@ from services.llm_service import LLMServiceError
 # 显式基于本文件所在目录加载 .env，避免后台启动/工作目录不同时找不到配置
 load_dotenv(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env"))
 
-app = Flask(__name__)
+# 直接以 frontend/ 为站点根目录托管前端页面（/focus.html、/index.html、/js、/css、/assets 都从根路径可访问）。
+# 前后端同源、单一端口，避免“单独起一个静态服务 + 另记一个端口”带来的端口冲突/路径不对（如 Cannot GET /focus.html）。
+app = Flask(__name__, static_folder="frontend", static_url_path="")
 CORS(app)
 
 
@@ -67,7 +69,8 @@ def is_valid_mood(value):
 
 @app.route("/", methods=["GET"])
 def home():
-    return jsonify({"message": "StarMate Backend Running!"})
+    # 站点首页直接返回前端 index.html（前端页面统一由 Flask 托管）
+    return send_from_directory(app.static_folder, "index.html")
 
 
 @app.route("/api/test", methods=["GET"])
@@ -267,6 +270,28 @@ def chat():
             400
         )
 
+    task_list = data.get("task_list")
+
+    if task_list is not None:
+        if not isinstance(task_list, list):
+            return error_response(
+                "INVALID_ARGUMENT",
+                "task_list 必须是数组或 null",
+                400
+            )
+        cleaned = []
+        for item in task_list:
+            if not isinstance(item, dict):
+                continue
+            text = item.get("text")
+            if not isinstance(text, str) or not text.strip():
+                continue
+            cleaned.append({
+                "text": text.strip()[:200],
+                "completed": bool(item.get("completed"))
+            })
+        task_list = cleaned or None
+
     companion = load_json("companion.json")
     history = load_json("chat_history.json", [])
 
@@ -284,6 +309,7 @@ def chat():
             mode=mode,
             task=task,
             mood=mood,
+            task_list=task_list,
             companion=companion,
             history=history,
             memory=memory
@@ -725,3 +751,4 @@ if __name__ == "__main__":
     host = os.environ.get("STAR_HOST", "127.0.0.1")
     port = int(os.environ.get("STAR_PORT", "5000"))
     app.run(debug=True, host=host, port=port)
+#（注：内容由AI生成）

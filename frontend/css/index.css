@@ -141,3 +141,9 @@
     object-fit: contain;
     display: block;
 }
+
+/* 伙伴人物：提升层级，让其显示在光圈之上 */
+.character-figure {
+    position: relative;
+    z-index: 1;
+}
