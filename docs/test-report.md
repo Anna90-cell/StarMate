@@ -1,8 +1,8 @@
 # StarMate 后端测试记录
 
-- 最近更新：2026-11-04
+- 最近更新：2026-11-05
 - 测试方式：Flask test_client，临时数据目录隔离，不影响 `data/` 真实数据
-- 后端接口测试：`python tests/test_api.py` → **46 项断言全部通过，0 失败**
+- 后端接口测试：`python tests/test_api.py` → **49 项断言全部通过，0 失败**
 - 端到端流程测试：`python tests/test_full_flow.py` → **9 步全部通过，0 失败**（mock 大模型，无需真实 Key）
 
 ## 覆盖范围
@@ -12,7 +12,7 @@
 | GET `/api/test` | 服务连通 | — |
 | POST `/api/companion/generate` | 生成成功，含 4 个约定字段，personality 为数组，name 原样保留 | name 缺失 400；description 空白 400；非法 JSON 400 |
 | GET `/api/companion` | 生成后可读取 | 未创建时返回 200 `data: null` |
-| PUT `/api/companion` | 正常更新返回 `saved: true`，可保存 avatar_id | 改 level/exp 被拒 400；空对象 400 |
+| PUT `/api/companion` | 正常更新返回 `saved: true`，可保存 avatar_id、room 与 pet_state | 改 level/exp 被拒 400；空对象 400；非法 pet_state 400 |
 | POST `/api/chat` | focus / entertainment 两种模式 | 空消息、非法 mode、越界 mood、非法 task 均 400；聊天记录落盘 |
 | POST `/api/focus/session` | 返回 201 与 session_id | 缺字段、负时长、非法情绪、非法时间、非法布尔均 400 |
 | GET `/api/focus/history` | 含新专注记录 | — |

@@ -1,4 +1,4 @@
-import { post, put } from "./api.js";
+import { post } from "./api.js";
 
 // 一、获取页面元素
 
@@ -16,14 +16,8 @@ const nameInput = document.getElementById("character-name");
 const confirmButton = document.getElementById("confirm-btn");
 
 const descriptionInput = document.getElementById("character-description");
-// 二、准备人物和背景数据
 
-const characterColors = {
-    character1: { hair: "#756482", body: "#c7b2d8" },
-    character2: { hair: "#a66e79", body: "#e9c3d0" },
-    character3: { hair: "#657e9c", body: "#b7d2e8" },
-    character4: { hair: "#987d55", body: "#e8d5a8" }
-};
+// 二、准备背景数据（人物立绘直接使用 assets/characters/ 下的 PNG）
 
 const backgroundStyles = {
     background1: "linear-gradient(135deg, #c9c3e5, #ead9e9, #b9c9df)",
@@ -46,29 +40,26 @@ const avatarIdMap = {
 };
 
 
-// 四、读取以前保存的数据
+// 四、读取后端已保存的伙伴数据
 
-function loadUserData() {
+async function loadUserData() {
 
-    const savedData = localStorage.getItem("starMateData");
+    const companion = await StarMateCompanion.load();
 
-    if (savedData) {
-
-        const userData = JSON.parse(savedData);
+    if (companion) {
 
         const savedCharacter = Object.keys(avatarIdMap).find(
-            key => avatarIdMap[key] === userData.avatar_id
+            key => avatarIdMap[key] === companion.avatar_id
         );
 
         selectedCharacter = savedCharacter || "character1";
-        console.log("恢复的角色：", selectedCharacter);
 
         selectedBackground =
-            backgroundStyles[userData.background]
-                ? userData.background
+            backgroundStyles[companion.room]
+                ? companion.room
                 : "background1";
 
-        nameInput.value = userData.name || "";
+        nameInput.value = companion.name === "我的伙伴" ? "" : companion.name;
 
     }
 
@@ -212,26 +203,18 @@ confirmButton.addEventListener("click", async function() {
     }
 
     try {
-        const result = await post("/api/companion/generate", {
-            name: nameInput.value.trim(),
-            description: descriptionInput.value.trim(),
-            avatar_id: avatarId
+        await post("/api/companion/generate", {
+            name: name,
+            description: description
         });
 
-        await put("/api/companion", {
-            avatar_id: avatarId
-        });
-
-        // 8. 保存前端需要的信息
-        const userData = {
+        // 形象与房间背景一并落盘，换设备或清缓存后仍能恢复
+        await StarMateCompanion.save({
             avatar_id: avatarId,
-            background: selectedBackground,
-            name: nameInput.value.trim()
-        };
+            room: selectedBackground
+        });
 
-        localStorage.setItem("starMateData", JSON.stringify(userData));
-
-        // 9. 提示创建成功并跳转
+        // 提示创建成功并跳转
         alert("伙伴创建成功！");
         window.location.href = "companion.html";
 

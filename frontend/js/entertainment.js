@@ -29,31 +29,12 @@ const stateMessages = {
     sleep: "伙伴：晚安，做个好梦！"
 };
 
-// 读取创建伙伴时保存的数据
-const savedData = JSON.parse(
-    localStorage.getItem("starMateData") || "null"
-);
-
-// 获取当前伙伴的 avatar_id
-const avatarId = savedData
-    ? (savedData.avatar_id || "character-01")
-    : "character-01";
-    
-// 状态对应的图片文件夹
-const stateFolders = {
-    idle: "idle",
-    study: "learning",
-    happy: "happy",
-    rest: "resting",
-    sleep: "sleeping"
-};
+// 伙伴形象以后端为准（StarMateCompanion 内部已做请求失败兜底）
+let avatarId = StarMateCompanion.DEFAULT_AVATAR;
 
 // 切换桌宠图片
 function updatePetImage(state) {
-    const folder = stateFolders[state];
-
-    petImage.src =
-    `assets/characters/states/${folder}/${avatarId}.png`;
+    petImage.src = StarMateCompanion.stateImage(avatarId, state);
 }
 
 // 切换桌宠动画
@@ -71,33 +52,47 @@ function updatePetAnimation(state) {
     petImage.classList.add(`pet-${state}`);
 }
 
+// 更新按钮选中效果
+function updateStateButtons(state) {
+    stateButtons.forEach(function (item) {
+        item.classList.toggle("is-selected", item.dataset.state === state);
+    });
+}
+
+// 切换到某个状态：更新界面，并把状态保存到后端
+function applyState(state, options) {
+    const persist = !options || options.persist !== false;
+
+    currentState = state;
+
+    petBubble.textContent = stateMessages[state];
+    updatePetImage(state);
+    updatePetAnimation(state);
+    updateStateButtons(state);
+
+    if (!persist) {
+        return;
+    }
+
+    // 状态写入后端，换设备或刷新后仍能恢复；失败只提示，不回滚界面
+    StarMateCompanion.savePetState(state).catch(function (error) {
+        console.error("桌宠状态保存失败：", error);
+    });
+}
+
 stateButtons.forEach(function (button) {
     button.addEventListener("click", function () {
-        const state = button.dataset.state;
-        currentState = state;
-        // StarMatePet.setState(state);
-
-        petBubble.textContent = stateMessages[state];
-        updatePetImage(state);
-        updatePetAnimation(state);
-
-        // 更新按钮选中效果
-        stateButtons.forEach(function (item) {
-            item.classList.remove("is-selected");
-        });
-
-        button.classList.add("is-selected");
+        applyState(button.dataset.state);
     });
 });
 
-// 默认进入待机状态
-updatePetImage("idle");
-updatePetAnimation("idle");
-
-stateButtons.forEach(function (button) {
-    if (button.dataset.state === "idle") {
-        button.classList.add("is-selected");
+// 页面加载：以后端保存的伙伴形象与状态初始化
+StarMateCompanion.load().then(function (companion) {
+    if (companion) {
+        avatarId = companion.avatar_id;
     }
+
+    applyState(companion ? companion.pet_state : "idle", { persist: false });
 });
 
 // 获取聊天框元素

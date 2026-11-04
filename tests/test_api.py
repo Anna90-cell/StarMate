@@ -156,6 +156,16 @@ check("PUT 试图修改 exp 被拒绝", resp.status_code == 400)
 resp = put_json("/api/companion", {})
 check("PUT 空对象 -> 400", resp.status_code == 400)
 
+resp = put_json("/api/companion", {"room": "background2", "pet_state": "happy"})
+check("PUT 可保存 room 与 pet_state",
+      resp.status_code == 200 and resp.get_json()["data"]["saved"] is True)
+
+check("room 与 pet_state 已落盘",
+      client.get("/api/companion").get_json()["data"]["pet_state"] == "happy")
+
+resp = put_json("/api/companion", {"pet_state": "dancing"})
+check("PUT 非法 pet_state -> 400", resp.status_code == 400)
+
 # ---------------------------------------------------------------------------
 # 2. AI 聊天
 # ---------------------------------------------------------------------------

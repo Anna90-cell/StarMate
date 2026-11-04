@@ -155,7 +155,8 @@ avatar_id 与经验值要用 `GET /api/companion` 或 `GET /api/reward` 读。
   "speaking_style": "亲切幽默",
   "companion_style": "鼓励为主",
   "avatar_id": "orange_cat",
-  "room": "study_room.jpg"
+  "room": "study_room.jpg",
+  "pet_state": "idle"
 }
 ```
 
@@ -172,6 +173,10 @@ avatar_id 与经验值要用 `GET /api/companion` 或 `GET /api/reward` 读。
 
 注意：`level` 和 `exp`
 由成长系统维护，前端保存伙伴资料时不要覆盖这两个字段。
+
+`pet_state` 保存娱乐空间最近一次的桌宠状态，取值只能是
+`idle`、`study`、`happy`、`rest`、`sleep` 之一，其他值返回 400 `INVALID_ARGUMENT`。
+前端由 `frontend/js/companion-store.js` 统一读写，不要在页面里各自保存。
 
 ### 3.4 AI 聊天
 

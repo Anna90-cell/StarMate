@@ -1,47 +1,38 @@
 
-/* 一、读取创建伙伴时保存的数据 */
-const savedData = JSON.parse(
-    localStorage.getItem("starMateData") || "null"
-);
-
-/* 二、准备背景样式 */
-const backgroundStyles = {
-    background1: "linear-gradient(135deg, #c9c3e5, #ead9e9, #b9c9df)",
-    background2: "linear-gradient(135deg, #d9c5b7, #f0dfc9, #b8cbbd)",
-    background3: "linear-gradient(135deg, #222c52, #626b9c, #b5a4ce)"
-};
-
-/* 三、如果用户已经创建了伙伴 */
-if (savedData) {
-
-    /* 设置页面背景 */
-    const selectedBackground =
-        backgroundStyles[savedData.background];
-
-    if (selectedBackground) {
-        document.body.style.backgroundImage = selectedBackground;
-        document.body.style.backgroundSize = "cover";
-        document.body.style.backgroundPosition = "center";
-        document.body.style.backgroundRepeat = "no-repeat";
-        document.body.style.backgroundAttachment = "fixed";
-        document.body.style.minHeight = "100vh";
-    }
-
-    /* 设置桌宠图片 */
+/*!
+ * 专注空间的场景初始化（scene.js）
+ *
+ * 伙伴形象、名字与房间背景统一以后端 GET /api/companion 为准，
+ * 由 companion-store.js 负责请求与离线兜底。
+ */
+StarMateCompanion.load().then(function (companion) {
     const sceneImage = document.getElementById("scene-image");
-
-    if (sceneImage) {
-        const number = (savedData.character || "character1")
-            .replace("character", "");
-
-        sceneImage.src =
-            `assets/characters/character-${number.padStart(2, "0")}.png`;
-    }
-
-    /* 显示伙伴名字 */
     const nameElement = document.querySelector("#scene-name");
 
-    if (nameElement) {
-        nameElement.textContent = savedData.name || "我的伙伴";
+    /* 尚未创建伙伴：保持页面默认文案，不显示形象 */
+    if (!companion) {
+        if (sceneImage) {
+            sceneImage.style.display = "none";
+        }
+
+        if (nameElement) {
+            nameElement.textContent = "等待相遇的伙伴";
+        }
+
+        return;
     }
-}
+
+    /* 房间背景铺满页面 */
+    StarMateCompanion.applyPageBackground(companion.room);
+
+    /* 伙伴立绘 */
+    if (sceneImage) {
+        sceneImage.src = StarMateCompanion.avatarImage(companion.avatar_id);
+        sceneImage.style.display = "";
+    }
+
+    /* 伙伴名字 */
+    if (nameElement) {
+        nameElement.textContent = companion.name;
+    }
+});

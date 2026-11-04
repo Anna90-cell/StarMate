@@ -2,17 +2,8 @@
 // 1. 获取页面元素
 // ==============================
 
-// 读取伙伴角色图片
-const sceneImage = document.getElementById("scene-image");
-
-const savedCompanion = JSON.parse(
-    localStorage.getItem("starMateData") || "null"
-);
-
-if (sceneImage && savedCompanion) {
-    const avatarId = savedCompanion.avatar_id || "character-01";
-    sceneImage.src = `assets/characters/${avatarId}.png`;
-}
+// 伙伴立绘由 scene.js 统一按后端数据设置（见 companion-store.js），
+// 这里不再重复读取 localStorage，避免两处写同一个 #scene-image。
 
 const timerDisplay = document.getElementById("timer");
 

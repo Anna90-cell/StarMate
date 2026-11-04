@@ -63,6 +63,11 @@ def is_valid_mood(value):
     )
 
 
+# 娱乐空间的桌宠状态，对应 frontend/assets/characters/states/ 下的素材目录。
+# avatar_id 不在后端做白名单，保持 docs/api-contract.md 3.3 的既有约定。
+VALID_PET_STATES = ["idle", "study", "happy", "rest", "sleep"]
+
+
 # ---------------------------------------------------------------------------
 # 基础检查路由
 # ---------------------------------------------------------------------------
@@ -118,13 +123,15 @@ def update_companion():
 
     # level、exp 由成长系统维护，不允许前端通过此接口修改
     # 外貌走预设形象库，前端只传 avatar_id；appearance/旧 avatar 字段已废弃
+    # room 保存房间背景，pet_state 保存娱乐空间最近一次的桌宠状态
     allowed_fields = [
         "name",
         "personality",
         "speaking_style",
         "companion_style",
         "avatar_id",
-        "room"
+        "room",
+        "pet_state"
     ]
 
     for key in new_data:
@@ -134,6 +141,13 @@ def update_companion():
                 "包含不允许修改的字段：" + key,
                 400
             )
+
+    if "pet_state" in new_data and new_data["pet_state"] not in VALID_PET_STATES:
+        return error_response(
+            "INVALID_ARGUMENT",
+            "pet_state 只能是：" + "、".join(VALID_PET_STATES),
+            400
+        )
 
     companion.update(new_data)
     save_json("companion.json", companion)
@@ -202,6 +216,7 @@ def create_companion():
         companion = {
             "avatar_id": "",
             "room": "default",
+            "pet_state": "idle",
             "level": 1,
             "exp": 0
         }

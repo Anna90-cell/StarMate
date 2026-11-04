@@ -1,56 +1,13 @@
-import { get } from "./api.js";
-
 // 一、获取页面元素
+// 伙伴数据统一通过 window.StarMateCompanion（companion-store.js）读取
 
 const companionDisplay = document.getElementById("companion-display");
 const emptyState = document.getElementById("empty-state");
 
-const companionName = document.getElementById("companion-name");
 
-const companionHair = document.querySelector(".companion-hair");
-const companionBody = document.querySelector(".companion-body");
-
-
-// 二、准备人物颜色数据
-
-const characterColors = {
-    character1: {
-        hair: "#756482",
-        body: "#c7b2d8"
-    },
-
-    character2: {
-        hair: "#a66e79",
-        body: "#e9c3d0"
-    },
-
-    character3: {
-        hair: "#657e9c",
-        body: "#b7d2e8"
-    },
-
-    character4: {
-        hair: "#987d55",
-        body: "#e8d5a8"
-    }
-};
-
-// 不同背景对应的样式
-const backgroundStyles = {
-    background1: "linear-gradient(135deg, #c9c3e5, #ead9e9, #b9c9df)",
-    background2: "linear-gradient(135deg, #d9c5b7, #f0dfc9, #b8cbbd)",
-    background3: "linear-gradient(135deg, #222c52, #626b9c, #b5a4ce)"
-};
-
-
-// 三、读取创建页面保存的数据
+// 二、读取伙伴数据（统一以后端为准）
 
 async function loadCompanion() {
-
-    // 1. 读取本地保存的背景设置
-    const savedData = JSON.parse(
-        localStorage.getItem("starMateData") || "null"
-    );
 
     const companionRoom = document.querySelector(".companion-room");
     const companionImage = document.getElementById("companion-image");
@@ -58,35 +15,29 @@ async function loadCompanion() {
 
     if (!companionRoom) return;
 
-    // 2. 恢复伙伴背景
-    companionRoom.style.background =
-        backgroundStyles[savedData?.background] || backgroundStyles.background1;
+    // 1. 伙伴资料与房间背景都来自 GET /api/companion
+    const companion = await StarMateCompanion.load();
 
-    try {
-        // 3. 从后端获取伙伴资料
-        const companion = await get("/api/companion");
+    // 2. 尚未创建伙伴
+    if (!companion) {
+        StarMateCompanion.applyRoomBackground(companionRoom, null);
 
-        // 4. 尚未创建伙伴
-        if (!companion) {
-            if (companionImage) companionImage.style.display = "none";
-            if (companionName) companionName.textContent = "等待相遇的伙伴";
-            return;
-        }
+        if (companionImage) companionImage.style.display = "none";
+        if (companionName) companionName.textContent = "等待相遇的伙伴";
+        return;
+    }
 
-        // 5. 获取后端保存的头像和名称
-        const avatarId = companion.avatar_id || "character-01";
+    // 3. 恢复房间背景
+    StarMateCompanion.applyRoomBackground(companionRoom, companion.room);
 
-        if (companionImage) {
-            companionImage.src = `assets/characters/${avatarId}.png`;
-            companionImage.style.display = "";
-        }
+    // 4. 应用后端保存的头像和名称
+    if (companionImage) {
+        companionImage.src = StarMateCompanion.avatarImage(companion.avatar_id);
+        companionImage.style.display = "";
+    }
 
-        if (companionName) {
-            companionName.textContent = companion.name || "我的伙伴";
-        }
-
-    } catch (error) {
-        console.error("伙伴资料加载失败：", error);
+    if (companionName) {
+        companionName.textContent = companion.name;
     }
 }
 
