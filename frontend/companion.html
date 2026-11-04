@@ -1,60 +1,3 @@
-<!--
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>我的伙伴 - StarMate</title>
-
-    <link rel="stylesheet" href="css/common.css">
-    <link rel="stylesheet" href="css/room.css">
-</head>
-
-<body>
-
-    <header>
-        <h1>我的伙伴</h1>
-        <p>欢迎回到你们的小天地</p>
-    </header>
-
-    <main>
-
-        <section>
-            <h2>伙伴信息</h2>
-            <div id="petInfo">
-                <p>伙伴名称：暂未创建</p>
-                <p>伙伴等级：Lv.1</p>
-                <p>伙伴经验：0</p>
-            </div>
-        </section>
-
-        <section>
-            <h2>伙伴房间</h2>
-            <div id="room">
-                <p>这里将展示你的伙伴和房间背景</p>
-            </div>
-        </section>
-
-        <section>
-            <h2>成长记录</h2>
-            <div id="growthInfo">
-                <p>这里将展示伙伴的成长情况</p>
-            </div>
-        </section>
-
-        <nav>
-            <a href="focus.html">进入专注空间</a>
-            <a href="entertainment.html">进入娱乐空间</a>
-            <a href="index.html">返回首页</a>
-        </nav>
-
-    </main>
-
-</body>
-</html>
--->
-
-
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -91,13 +34,17 @@
             <!-- 有伙伴时显示 -->
             <div class="companion-display" id="companion-display">
 
-                <div class="companion-character">
 
-                    <div class="companion-head"></div>
-                    <div class="companion-hair"></div>
-                    <div class="companion-body"></div>
+            <div class="companion-character">
 
-                </div>
+                <img
+                    id="companion-image"
+                    src="assets/characters/character-01.png"
+                    alt="我的桌宠"
+                >
+
+            </div>
+
 
                 <div class="companion-info">
                     <h2 id="companion-name">我的伙伴</h2>
@@ -154,7 +101,7 @@
 
 <script src="js/c-api.js"></script>
 <script src="js/growth.js"></script>
-<script src="js/companion.js"></script>
+<script type="module" src="js/companion.js"></script>
 
 
 </body>

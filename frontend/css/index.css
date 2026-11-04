@@ -76,50 +76,6 @@
     filter: blur(10px);
 }
 
-/* 临时人物 */
-.character-figure {
-    position: relative;
-    width: 190px;
-    height: 340px;
-    z-index: 1;
-}
-
-/* 头部 */
-.character-head {
-    position: absolute;
-    top: 25px;
-    left: 45px;
-    width: 100px;
-    height: 115px;
-    border-radius: 48% 48% 45% 45%;
-    background: #f4d5d5;
-    z-index: 2;
-}
-
-/* 头发 */
-.character-hair {
-    position: absolute;
-    top: 10px;
-    left: 30px;
-    width: 130px;
-    height: 150px;
-    border-radius: 50% 50% 40% 40%;
-    background: #756482;
-    z-index: 1;
-}
-
-/* 身体 */
-.character-body {
-    position: absolute;
-    top: 130px;
-    left: 20px;
-    width: 150px;
-    height: 205px;
-    border-radius: 55px 55px 20px 20px;
-    background: linear-gradient(135deg, #f4e6f2, #c7b2d8);
-    z-index: 3;
-}
-
 /* 人物信息 */
 .character-info {
     text-align: center;
@@ -176,4 +132,12 @@
     color: #786b87;
     font-size: 13px;
     letter-spacing: 1px;
+}
+
+/* 首页真实伙伴图片 */
+#home-character-image {
+    width: 180px;
+    height: auto;
+    object-fit: contain;
+    display: block;
 }

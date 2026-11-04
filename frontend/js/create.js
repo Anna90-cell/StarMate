@@ -1,161 +1,4 @@
-
-// // 获取所有分类按钮
-// const tabButtons = document.querySelectorAll(".tab-btn");
-
-// // 获取所有内容面板
-// const tabContents = document.querySelectorAll(".tab-content");
-
-
-// // 一、切换人物、背景、设置
-// tabButtons.forEach(button => {
-
-//     button.addEventListener("click", function () {
-
-//         // 获取当前按钮对应的分类
-//         const target = this.dataset.tab;
-
-//         // 清除所有按钮的选中状态
-//         tabButtons.forEach(btn => {
-//             btn.classList.remove("active");
-//         });
-
-//         // 清除所有内容面板的显示状态
-//         tabContents.forEach(content => {
-//             content.classList.remove("active");
-//         });
-
-//         // 激活当前按钮
-//         this.classList.add("active");
-
-//         // 显示对应内容
-//         document.getElementById(target).classList.add("active");
-
-//     });
-
-// });
-
-
-// // 二、人物选择
-// const characterCards = document.querySelectorAll(
-//     "[data-character]"
-// );
-
-// const previewName = document.getElementById("preview-name");
-
-// const previewHair = document.querySelector(".preview-hair");
-// const previewBody = document.querySelector(".preview-body");
-
-// const characterColors = [
-//     { hair: "#756482", body: "#c7b2d8" },
-//     { hair: "#a66e79", body: "#e9c3d0" },
-//     { hair: "#657e9c", body: "#b7d2e8" },
-//     { hair: "#987d55", body: "#e8d5a8" }
-// ];
-
-// characterCards.forEach(card => {
-
-//     card.addEventListener("click", function () {
-
-//         // 获取人物编号
-//         const number = Number(this.dataset.character);
-
-//         // 更新选中状态
-//         characterCards.forEach(item => {
-//             item.classList.remove("selected");
-//         });
-
-//         this.classList.add("selected");
-
-//         // 更新右侧人物颜色
-//         const colors = characterColors[number - 1];
-
-//         previewHair.style.background = colors.hair;
-//         previewBody.style.background = colors.body;
-
-//         // 更新人物名称
-//         previewName.textContent = `人物${number}`;
-
-//     });
-
-// });
-
-
-// // 三、背景选择
-// const backgroundCards = document.querySelectorAll(
-//     "[data-background]"
-// );
-
-// const createMain = document.querySelector(".create-main");
-
-// const backgroundStyles = [
-//     "linear-gradient(135deg, #c9c3e5, #ead9e9, #b9c9df)",
-//     "linear-gradient(135deg, #d9c5b7, #f0dfc9, #b8cbbd)",
-//     "linear-gradient(135deg, #222c52, #626b9c, #b5a4ce)"
-// ];
-
-// backgroundCards.forEach(card => {
-
-//     card.addEventListener("click", function () {
-
-//         const number = Number(this.dataset.background);
-
-//         backgroundCards.forEach(item => {
-//             item.classList.remove("selected");
-//         });
-
-//         this.classList.add("selected");
-
-//         // 切换整个场景背景
-//         createMain.style.background =
-//             backgroundStyles[number - 1];
-
-//     });
-
-// });
-
-
-// // 四、确认创建
-// const confirmButton = document.getElementById("confirm-btn");
-
-// confirmButton.addEventListener("click", function () {
-
-//     const selectedCharacter = document.querySelector(
-//         "[data-character].selected"
-//     );
-
-//     const selectedBackground = document.querySelector(
-//         "[data-background].selected"
-//     );
-
-//     const characterName = document.getElementById(
-//         "character-name"
-//     ).value.trim();
-
-//     const characterNumber = selectedCharacter.dataset.character;
-//     const backgroundNumber = selectedBackground.dataset.background;
-
-//     alert(
-//         `创建选择已确认！\n` +
-//         `人物：人物${characterNumber}\n` +
-//         `背景：背景${backgroundNumber}\n` +
-//         `名称：${characterName || "暂未命名"}`
-//     );
-
-// });
-
-
-// =====================================
-// StarMate 创建伙伴页面
-// =====================================
-
-
-// 一、获取页面元素
-
-
-// =====================================
-// StarMate 创建伙伴页面
-// =====================================
-
+import { post, put } from "./api.js";
 
 // 一、获取页面元素
 
@@ -166,14 +9,13 @@ const characterCards = document.querySelectorAll("[data-character]");
 const backgroundCards = document.querySelectorAll("[data-background]");
 
 const previewName = document.getElementById("preview-name");
-const previewHair = document.querySelector(".preview-hair");
-const previewBody = document.querySelector(".preview-body");
+const previewImage = document.getElementById("preview-image");
 
 const createMain = document.querySelector(".create-main");
 const nameInput = document.getElementById("character-name");
 const confirmButton = document.getElementById("confirm-btn");
 
-
+const descriptionInput = document.getElementById("character-description");
 // 二、准备人物和背景数据
 
 const characterColors = {
@@ -195,6 +37,14 @@ const backgroundStyles = {
 let selectedCharacter = "character1";
 let selectedBackground = "background1";
 
+const avatarIdMap = {
+    character1: "character-01",
+    character2: "character-02",
+    character3: "character-03",
+    character4: "character-04",
+    character5: "character-05"
+};
+
 
 // 四、读取以前保存的数据
 
@@ -206,10 +56,12 @@ function loadUserData() {
 
         const userData = JSON.parse(savedData);
 
-        selectedCharacter =
-            characterColors[userData.character]
-                ? userData.character
-                : "character1";
+        const savedCharacter = Object.keys(avatarIdMap).find(
+            key => avatarIdMap[key] === userData.avatar_id
+        );
+
+        selectedCharacter = savedCharacter || "character1";
+        console.log("恢复的角色：", selectedCharacter);
 
         selectedBackground =
             backgroundStyles[userData.background]
@@ -255,30 +107,30 @@ tabButtons.forEach(button => {
 
 
 // 六、更新人物预览
-
 function updateCharacter() {
 
-    const colors = characterColors[selectedCharacter];
+    // 获取当前角色编号
+    const number = selectedCharacter.replace("character", "");
 
-    previewHair.style.background = colors.hair;
-    previewBody.style.background = colors.body;
+    // 更新右侧桌宠图片
+    previewImage.src =
+        `assets/characters/character-${number.padStart(2, "0")}.png`;
 
     // 更新选中卡片
     characterCards.forEach(card => {
 
         card.classList.toggle(
             "selected",
-            card.dataset.character === selectedCharacter
+            card.dataset.character === number
         );
 
     });
 
     // 更新人物名称
-    const number = selectedCharacter.replace("character", "");
-
-    previewName.textContent = `人物${number}`;
+    previewName.textContent = `角色${number}`;
 
 }
+
 
 
 // 点击人物卡片
@@ -327,29 +179,66 @@ backgroundCards.forEach(card => {
 
 // 八、确认创建并保存数据
 
-confirmButton.addEventListener("click", function () {
+confirmButton.addEventListener("click", async function() {
+    // 0. 获取并检查伙伴姓名
+    const name = nameInput.value.trim();
 
-    const userData = {
+    if (!name) {
+        alert("请输入伙伴姓名！");
+        return;
+    }
 
-        character: selectedCharacter,
+    if (name.length > 20) {
+        alert("伙伴姓名不能超过20个字符！");
+        return;
+    }
+    
+    // 1. 获取用户输入的人设描述
+    const description = descriptionInput.value.trim();
 
-        background: selectedBackground,
+    // 2. 获取当前选择的 avatar_id
+    const avatarId = avatarIdMap[selectedCharacter];
 
-        name: nameInput.value.trim() || "我的伙伴"
+    // 3. 检查描述是否为空
+    if (!description) {
+        alert("请先描述一下你想要的伙伴！");
+        return;
+    }
 
-    };
+    // 4. 检查形象是否有效
+    if (!avatarId) {
+        alert("请选择伙伴形象！");
+        return;
+    }
 
-    // 保存到浏览器
-    localStorage.setItem(
-        "starMateData",
-        JSON.stringify(userData)
-    );
+    try {
+        const result = await post("/api/companion/generate", {
+            name: nameInput.value.trim(),
+            description: descriptionInput.value.trim(),
+            avatar_id: avatarId
+        });
 
-    alert("伙伴信息保存成功！");
+        await put("/api/companion", {
+            avatar_id: avatarId
+        });
 
-    // 进入我的伙伴页面
-    window.location.href = "companion.html";
+        // 8. 保存前端需要的信息
+        const userData = {
+            avatar_id: avatarId,
+            background: selectedBackground,
+            name: nameInput.value.trim()
+        };
 
+        localStorage.setItem("starMateData", JSON.stringify(userData));
+
+        // 9. 提示创建成功并跳转
+        alert("伙伴创建成功！");
+        window.location.href = "companion.html";
+
+    } catch (error) {
+        console.error("伙伴创建请求失败：", error);
+        alert(error.message);
+    }
 });
 
 

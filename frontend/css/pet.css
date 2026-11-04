@@ -1,23 +1,3 @@
-/* 桌宠活动区域 
-#petContainer {
-    position: relative;
-    height: 350px;
-    background-color: #F0EAFE;
-    border-radius: 20px;
-    overflow: hidden;
-}*/
-
-/* 桌宠本身 
-#desktopPet {
-    position: absolute;
-    left: 45%;
-    top: 40%;
-    font-size: 60px;
-    cursor: pointer;
-    user-select: none;
-}*/
-
-
 /* ===== 娱乐空间整体 ===== */
 
 body {
@@ -230,4 +210,189 @@ main section h2 {
 .page-actions a:hover {
     background: #9885b5;
     color: white;
+}
+
+/* 娱乐空间桌宠图片 */
+#petImage {
+    width: 150px;
+    height: 210px;
+    object-fit: contain;
+    display: block;
+    margin: 0 auto;
+}
+
+
+/* 桌宠动画基础设置 */
+#petImage {
+    transition: transform 0.3s ease;
+    transform-origin: center bottom;
+}
+
+/* 待机：轻微浮动 */
+#petImage.pet-idle {
+    animation: petFloat 3s ease-in-out infinite;
+}
+
+/* 学习：轻微浮动 */
+#petImage.pet-study {
+    animation: petFloat 4s ease-in-out infinite;
+}
+
+/* 开心：上下弹跳 */
+#petImage.pet-happy {
+    animation: petBounce 0.6s ease-in-out infinite;
+}
+
+/* 休息：轻微左右摆动 */
+#petImage.pet-rest {
+    animation: petSway 3s ease-in-out infinite;
+}
+
+/* 睡觉：呼吸缩放 */
+#petImage.pet-sleep {
+    animation: petBreath 3s ease-in-out infinite;
+}
+
+/* 上下浮动 */
+@keyframes petFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+/* 开心弹跳 */
+@keyframes petBounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-18px); }
+}
+
+/* 左右摆动 */
+@keyframes petSway {
+    0%, 100% { transform: rotate(0); }
+    25% { transform: rotate(-3deg); }
+    75% { transform: rotate(3deg); }
+}
+
+/* 睡觉呼吸 */
+@keyframes petBreath {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.03); }
+}
+
+
+/* ============================
+   桌宠头顶消息气泡
+============================ */
+
+#petContainer {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* 桌宠消息气泡 */
+.pet-bubble {
+    position: absolute;
+    bottom: calc(100% - 40px);
+    left: 50%;
+    transform: translateX(-50%);
+
+    width: max-content;
+    max-width: 320px;
+    min-width: 100px;
+
+    padding: 12px 16px;
+    border-radius: 18px;
+
+    background: rgba(255, 255, 255, 0.92);
+    color: #756482;
+
+    font-size: 14px;
+    line-height: 1.6;
+    text-align: center;
+
+    overflow-wrap: anywhere;
+    box-shadow: 0 5px 18px rgba(90, 70, 110, 0.12);
+
+    z-index: 10;
+}
+
+/* 气泡小尾巴 */
+.pet-bubble::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: -8px;
+    transform: translateX(-50%);
+
+    border-width: 8px 8px 0;
+    border-style: solid;
+    border-color: rgba(255, 255, 255, 0.92) transparent transparent;
+}
+
+
+/* ============================
+   娱乐空间底部聊天框
+============================ */
+
+#chat-section {
+    position: fixed;
+    left: 50%;
+    bottom: 150px;
+    transform: translateX(-50%);
+
+    width: min(500px, 90vw);
+    padding: 0;
+
+    background: transparent;
+    box-shadow: none;
+
+    z-index: 20;
+}
+
+#chat-section .chat-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    padding: 8px 10px 8px 20px;
+    border-radius: 32px;
+
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 5px 20px rgba(90, 70, 110, 0.12);
+}
+
+#chat-section #chatInput {
+    flex: 1;
+    min-width: 0;
+
+    border: none;
+    outline: none;
+    background: transparent;
+
+    font-size: 14px;
+    color: #756482;
+}
+
+#chat-section #sendBtn {
+    flex-shrink: 0;
+    border-radius: 24px;
+    padding: 10px 20px;
+
+    background: #9b83b5;
+    color: white;
+}
+
+/* 页面底部返回按钮 */
+.page-actions {
+    position: fixed;
+    left: 50%;
+    bottom: 15px;
+    transform: translateX(-50%);
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    width: 100%;
+    z-index: 30;
 }

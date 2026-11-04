@@ -108,7 +108,7 @@
 }
 
 .option-card.selected {
-    border-color: #ffe4ff;
+    border: 2px solid #ffe4ff;
     background: rgba(255,255,255,0.3);
 }
 
@@ -254,4 +254,94 @@
     background: #756482;
     color: white;
     transform: translateY(-3px);
+}
+
+
+/* 创建伙伴：角色图片 */
+.option-card img {
+    width: 100%;
+    height: 150px;
+    object-fit: contain;
+    display: block;
+    margin-bottom: 8px;
+}
+
+/* 角色卡片布局 */
+.option-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+/* 右侧桌宠立绘 */
+.preview-character {
+    width: 100%;
+    height: 420px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.preview-character img {
+    height: 100%;
+    max-width: 100%;
+    object-fit: contain;
+}
+
+
+/* 伙伴人设描述输入区域 */
+.description-input {
+    width: 100%;
+    margin-top: 20px;
+}
+
+/* 描述框标题 */
+.description-input label {
+    display: block;
+    margin-bottom: 10px;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+/* 多行文字输入框 */
+#character-description {
+    width: 100%;
+    min-height: 110px;
+    padding: 14px 16px;
+
+    box-sizing: border-box;
+    resize: vertical;
+
+    border: 1px solid #dcd2e8;
+    border-radius: 14px;
+
+    background: rgba(255, 255, 255, 0.75);
+    color: #574967;
+
+    font-size: 14px;
+    line-height: 1.7;
+    font-family: inherit;
+
+    outline: none;
+    transition: all 0.25s ease;
+}
+
+/* 输入框提示文字 */
+#character-description::placeholder {
+    color: #b5a8c3;
+}
+
+/* 鼠标悬停 */
+#character-description:hover {
+    border-color: #c4b2d8;
+}
+
+/* 输入时的焦点效果 */
+#character-description:focus {
+    border-color: #a993c8;
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 0 0 4px rgba(169, 147, 200, 0.12);
 }

@@ -1,7 +1,20 @@
 // ==============================
 // 1. 获取页面元素
 // ==============================
+// ==============================
+// 读取伙伴角色图片
+// ==============================
 
+const sceneImage = document.getElementById("scene-image");
+
+const savedCompanion = JSON.parse(
+    localStorage.getItem("starMateData") || "null"
+);
+
+if (sceneImage && savedCompanion) {
+    const avatarId = savedCompanion.avatar_id || "character-01";
+    sceneImage.src = `assets/characters/${avatarId}.png`;
+}
 const timerDisplay = document.getElementById("timer");
 
 const startBtn = document.getElementById("startBtn");
@@ -22,40 +35,7 @@ let focusFinishResult = null;
 
 // 防止重复提交
 let focusSubmitStarted = false;
-// // ==============================
-// // 2. 初始化计时器
-// // ==============================
 
-// // 默认专注时间：25分钟
-// const TOTAL_TIME = 10;
-
-// // 当前剩余时间
-// let remainingTime = TOTAL_TIME;
-
-// // 保存计时器
-// let timerInterval = null;
-
-
-// ==============================
-// 3. 更新时间显示
-// ==============================
-
-// function updateTimerDisplay() {
-
-//     const minutes = Math.floor(remainingTime / 60);
-
-//     const seconds = remainingTime % 60;
-
-//     timerDisplay.textContent =
-//         String(minutes).padStart(2, "0") +
-//         ":" +
-//         String(seconds).padStart(2, "0");
-// }
-
-
-// ==============================
-// 4. 进入专注模式
-// ==============================
 
 function enterFocusMode() {
 
@@ -91,89 +71,6 @@ function handleFocusFinish() {
     endScreen.hidden = false;
 }
 
-// ==============================
-// 6. 开始专注
-// ==============================
-
-// function startTimer() {
-
-//     // 如果计时器已经运行，就不重复启动
-//     if (timerInterval !== null) {
-//         return;
-//     }
-
-//     // 进入专注模式
-//     enterFocusMode();
-
-//     // 开始倒计时
-//     timerInterval = setInterval(function () {
-
-//         remainingTime--;
-
-//         updateTimerDisplay();
-
-//         // 时间结束
-//         if (remainingTime <= 0) {
-
-//             clearInterval(timerInterval);
-
-//             timerInterval = null;
-
-//             remainingTime = 0;
-
-//             updateTimerDisplay();
-
-//             // 显示结束提示
-//             endScreen.hidden = false;
-//         }
-
-//     }, 1000);
-// }
-
-
-// ==============================
-// 7. 暂停专注
-// ==============================
-
-// function pauseTimer() {
-
-//     if (timerInterval !== null) {
-
-//         clearInterval(timerInterval);
-
-//         timerInterval = null;
-//     }
-// }
-
-
-// ==============================
-// 8. 重置计时器
-// ==============================
-
-// function resetTimer() {
-
-//     // 停止计时
-//     if (timerInterval !== null) {
-
-//         clearInterval(timerInterval);
-
-//         timerInterval = null;
-//     }
-
-//     // 恢复25分钟
-//     remainingTime = TOTAL_TIME;
-
-//     updateTimerDisplay();
-
-//     // 恢复正常界面
-//     exitFocusMode();
-// }
-
-
-// ==============================
-// 9. 退出专注结束界面
-// ==============================
-
 function exitFinishedFocus() {
     // 如果还没有提交，退出时提交
     submitFocusResult();
@@ -192,28 +89,7 @@ function exitFinishedFocus() {
     StarMateMood.reset();
 }
 
-// ==============================
-// 10. 绑定按钮事件
-// ==============================
-
-// startBtn.addEventListener("click", startTimer);
-
-// pauseBtn.addEventListener("click", pauseTimer);
-
-// resetBtn.addEventListener("click", resetTimer);
-
 exitFocusBtn.addEventListener("click", exitFinishedFocus);
-
-
-// ==============================
-// 11. 页面初始化
-// ==============================
-
-// updateTimerDisplay();
-
-// ==============================
-// Todo List：持久化与任务删除
-// ==============================
 
 const taskInput = document.getElementById("taskInput");
 const todoList = document.getElementById("todo-list");
@@ -319,11 +195,6 @@ taskInput.addEventListener("keydown", function (event) {
 // 页面加载时显示已保存的任务
 renderTasks();
 
-// ==============================
-// 12. 接入队友的专注计时器
-// ==============================
-// 开始专注时，进入专注模式
-
  // 专注结束时：显示结束界面 + 保存专注记录 + 结算经验
 StarMateFocus.on('finish', function (result) {
     focusFinishResult = result;
@@ -385,3 +256,57 @@ function submitFocusResult() {
 
     StarMateFocusFlow.saveSession(focusFinishResult);
 }
+
+// ==============================
+// 聊天框与伙伴消息气泡
+// ==============================
+
+const chatInput = document.getElementById("chatInput");
+const sendBtn = document.getElementById("sendBtn");
+const focusPetBubble = document.getElementById("focusPetBubble");
+
+
+async function sendChatMessage() {
+
+    const message = chatInput.value.trim();
+
+    if (message === "") {
+        return;
+    }
+
+    // 显示等待状态
+    focusPetBubble.textContent = "伙伴正在思考……";
+
+    // 清空输入框
+    chatInput.value = "";
+
+    try {
+        const result = await StarMateC.post("/api/chat", {
+            message: message,
+            mode: "focus",
+            task: StarMateFocus.getState().task || null,
+            mood: StarMateMood.get("before")
+        });
+
+        // 显示后端返回的 AI 回复
+        focusPetBubble.textContent = result.reply;
+
+    } catch (error) {
+        console.error("专注模式聊天请求失败：", error);
+
+        focusPetBubble.textContent = "伙伴暂时无法回应，请稍后再试～";
+    }
+}
+
+
+// 点击发送按钮
+sendBtn.addEventListener("click", sendChatMessage);
+
+// 按回车发送
+chatInput.addEventListener("keydown", function (event) {
+
+    if (event.key === "Enter") {
+        sendChatMessage();
+    }
+
+});

@@ -318,3 +318,18 @@ body {
     min-height: 100vh;
     background: transparent;
 }
+
+/* 我的伙伴：桌宠完整立绘 */
+.companion-character {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 360px;
+}
+
+.companion-character img {
+    height: 100%;
+    max-width: 100%;
+    object-fit: contain;
+}

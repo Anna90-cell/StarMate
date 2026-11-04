@@ -1,3 +1,5 @@
+import { get } from "./api.js";
+
 // 一、获取页面元素
 
 const companionDisplay = document.getElementById("companion-display");
@@ -43,34 +45,51 @@ const backgroundStyles = {
 
 // 三、读取创建页面保存的数据
 
+async function loadCompanion() {
 
-function loadCompanion() {
-
-    // 读取创建页面保存的数据
+    // 1. 读取本地保存的背景设置
     const savedData = JSON.parse(
         localStorage.getItem("starMateData") || "null"
     );
 
-    // 获取伙伴房间
-    const companionRoom = document.body;
+    const companionRoom = document.querySelector(".companion-room");
+    const companionImage = document.getElementById("companion-image");
+    const companionName = document.getElementById("companion-name");
 
     if (!companionRoom) return;
 
-    // 没有创建伙伴时，使用默认背景
-    if (!savedData) {
-        companionRoom.style.background =
-            "linear-gradient(135deg, #c9c3e5, #ead9e9, #b9c9df)";
-        return;
-    }
-
-    // 有伙伴数据时，使用创建时选择的背景
+    // 2. 恢复伙伴背景
     companionRoom.style.background =
-        backgroundStyles[savedData.background] ||
-        backgroundStyles.background1;
+        backgroundStyles[savedData?.background] || backgroundStyles.background1;
 
-    console.log("伙伴房间元素：", companionRoom);
-    console.log("实际背景：", getComputedStyle(companionRoom).background);
+    try {
+        // 3. 从后端获取伙伴资料
+        const companion = await get("/api/companion");
+
+        // 4. 尚未创建伙伴
+        if (!companion) {
+            if (companionImage) companionImage.style.display = "none";
+            if (companionName) companionName.textContent = "等待相遇的伙伴";
+            return;
+        }
+
+        // 5. 获取后端保存的头像和名称
+        const avatarId = companion.avatar_id || "character-01";
+
+        if (companionImage) {
+            companionImage.src = `assets/characters/${avatarId}.png`;
+            companionImage.style.display = "";
+        }
+
+        if (companionName) {
+            companionName.textContent = companion.name || "我的伙伴";
+        }
+
+    } catch (error) {
+        console.error("伙伴资料加载失败：", error);
+    }
 }
+
 
 
 

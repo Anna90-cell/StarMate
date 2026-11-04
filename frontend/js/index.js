@@ -1,28 +1,10 @@
+import { get } from "./api.js";
+
 // 读取创建伙伴页面保存的数据
 const savedData = JSON.parse(localStorage.getItem("starMateData"));
 
 // 如果用户还没有创建伙伴，就不执行后续操作
 if (savedData) {
-
-    // 1. 定义不同角色对应的颜色
-    const characterColors = {
-        character1: {
-            hair: "#756482",
-            body: "#c7b2d8"
-        },
-        character2: {
-            hair: "#a66e79",
-            body: "#e9c3d0"
-        },
-        character3: {
-            hair: "#657e9c",
-            body: "#b7d2e8"
-        },
-        character4: {
-            hair: "#987d55",
-            body: "#e8d5a8"
-        }
-    };
 
     // 2. 定义不同背景对应的渐变效果
     const backgroundStyles = {
@@ -33,8 +15,6 @@ if (savedData) {
 
     // 3. 获取首页中的角色和背景元素
     const mainContent = document.querySelector(".main-content");
-    const characterHair = document.querySelector(".character-hair");
-    const characterBody = document.querySelector(".character-body");
     const characterName = document.querySelector("#home-character-name");
 
     // 4. 根据用户选择的背景修改首页背景
@@ -42,16 +22,50 @@ if (savedData) {
         mainContent.style.background = backgroundStyles[savedData.background];
     }
 
-    // 5. 根据用户选择的角色修改人物颜色
-    const colors = characterColors[savedData.character];
+}
 
-    if (colors) {
-        characterHair.style.background = colors.hair;
-        characterBody.style.background = colors.body;
-    }
+// ==============================
+// 首页伙伴形象加载
+// ==============================
 
-    // 6. 显示用户给伙伴起的名字
-    if (characterName) {
-        characterName.textContent = savedData.name;
+async function loadHomeCompanion() {
+
+    // 获取首页伙伴图片和名称元素
+    const homeCharacterImage = document.getElementById("home-character-image");
+    const homeCharacterName = document.getElementById("home-character-name");
+
+    try {
+        // 从后端获取伙伴资料
+        const companion = await get("/api/companion");
+
+        // 如果还没有创建伙伴
+        if (!companion) {
+            if (homeCharacterName) {
+                homeCharacterName.textContent = "等待相遇的伙伴";
+            }
+
+            if (homeCharacterImage) {
+                homeCharacterImage.style.display = "none";
+            }
+
+            return;
+        }
+
+        // 获取伙伴头像和名称
+        const avatarId = companion.avatar_id || "character-01";
+
+        if (homeCharacterImage) {
+            homeCharacterImage.src = `assets/characters/${avatarId}.png`;
+        }
+
+        if (homeCharacterName) {
+            homeCharacterName.textContent = companion.name || "我的伙伴";
+        }
+
+    } catch (error) {
+        console.error("首页伙伴信息加载失败：", error);
     }
 }
+
+// 页面加载时获取伙伴信息
+loadHomeCompanion();

@@ -21,10 +21,22 @@
 
         <section>
             <div id="petContainer">
-                <div id="desktopPet">
-                    <p id="petEmoji">🐱</p>
+
+                <!-- 桌宠头顶消息气泡 -->
+                <div id="petBubble" class="pet-bubble">
+                    伙伴：今天想和我玩什么呢？
                 </div>
+
+                <div id="desktopPet">
+                    <img
+                        id="petImage"
+                        src="assets/characters/states/idle/character-01.png"
+                        alt="我的桌宠"
+                    >
+                </div>
+
                 <p class="pet-tip">点击伙伴，和它互动！</p>
+
             </div>
         </section>
 
@@ -38,13 +50,22 @@
             <button data-state="sleep">睡觉</button>
         </section>
 
-        <section>
-            <h2>互动消息</h2>
-            <div id="petMessage">
-                伙伴：今天想和我玩什么呢？
+        <!-- 桌宠头顶的消息气泡
+        <div id="petBubble" class="pet-bubble">
+            伙伴：今天想和我玩什么呢？
+        </div> -->
+
+        <!-- 底部聊天输入框 -->
+        <section id="chat-section">
+            <div class="chat-bar">
+                <input
+                    type="text"
+                    id="chatInput"
+                    placeholder="和伙伴说点什么吧..."
+                >
+                <button id="sendBtn">发送</button>
             </div>
         </section>
-
         <div class="page-actions">
             <a href="companion.html">返回伙伴主页</a>
             <a href="index.html">返回首页</a>

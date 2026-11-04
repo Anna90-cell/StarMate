@@ -3,7 +3,7 @@
     position: fixed;
     z-index: 1;
     top: 50%;
-    left: 58%;
+    left: 50%;
     transform: translate(-50%, -50%);
 
     display: flex;
@@ -99,7 +99,7 @@ body {
 main {
     position: relative;
     display: grid;
-    grid-template-columns: minmax(350px, 1.35fr) minmax(300px, 1fr) minmax(190px, 0.7fr);
+    grid-template-columns: minmax(280px, 1fr) minmax(400px, 1.4fr) minmax(190px, 0.7fr);
     gap: 25px;
     min-height: 100vh;
     padding: 30px 35px;
@@ -332,7 +332,7 @@ body.focus-mode #focus-end-screen {
     position: fixed;
     z-index: 5;
 
-    left: 58%;
+    left: 50%;
     top: 78%;
 
     transform: translateX(-50%);
@@ -553,20 +553,92 @@ header p {
     margin: 30px auto;
 }
 
-#normal-actions a {
-    display: inline-block;
-    padding: 12px 25px;
+#normal-actions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
 
-    border-radius: 25px;
-    background: rgba(255, 255, 255, 0.7);
-    color: #756482;
-
-    text-decoration: none;
-    transition: 0.25s;
+    width: 100%;
+    margin: 30px auto;
+    padding-right: 40px;
+    box-sizing: border-box;
 }
 
 #normal-actions a:hover {
     background: #9885b5;
     color: white;
     transform: translateY(-2px);
+}
+
+/* 专注空间角色区域 */
+.scene-character {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 250px;
+    margin-bottom: 0;
+    position: relative;
+}
+
+.scene-character img {
+    height: 100%;
+    max-width: 100%;
+    object-fit: contain;
+}
+
+/* 伙伴名称与角色分开显示 */
+.scene-info {
+    position: relative;
+    z-index: 2;
+    margin-top: 100px;
+    text-align: center;
+}
+
+/* 增大陪伴日记区域高度 */
+#diary-section {
+    min-height: 300px;
+    box-sizing: border-box;
+}
+
+/* 专注空间伙伴头顶消息气泡 */
+.focus-pet-bubble {
+    position: absolute;
+
+    /* 移到桌宠右侧 */
+    left: calc(50% + 90px);
+    top: 10px;
+    transform: none;
+
+    /* 缩窄气泡 */
+    width: 180px;
+    max-width: 180px;
+    min-width: 0;
+
+    padding: 10px 14px;
+    border-radius: 16px;
+
+    background: rgba(255, 255, 255, 0.92);
+    color: #756482;
+
+    font-size: 13px;
+    line-height: 1.6;
+    text-align: center;
+    overflow-wrap: anywhere;
+
+    box-shadow: 0 5px 18px rgba(90, 70, 110, 0.12);
+    z-index: 10;
+}
+
+/* 气泡尾巴 */
+.focus-pet-bubble::after {
+    content: "";
+    position: absolute;
+    left: -6px;
+    top: 12px;
+
+    border-width: 8px 8px 8px 0;
+    border-style: solid;
+    border-color: transparent rgba(255, 255, 255, 0.92) transparent transparent;
 }
